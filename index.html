@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+<title>Walkie Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.4/html5-qrcode.min.js"></script>
+<style>
+  :root{
+    --bg:#14161a;
+    --bg-elev:#1c1f24;
+    --bg-elev-2:#242832;
+    --ink:#eee9df;
+    --ink-dim:#8d9199;
+    --amber:#f2a93b;
+    --amber-ink:#1a1305;
+    --green:#3fae6e;
+    --green-ink:#06140a;
+    --red:#e2575a;
+    --red-ink:#1a0707;
+    --line:#2b2f37;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;min-height:100vh;
+  }
+  .app{
+    max-width:480px;margin:0 auto;min-height:100vh;
+    display:flex;flex-direction:column;
+    background:radial-gradient(circle at 50% 0%,rgba(242,169,59,.06),transparent 60%),var(--bg);
+  }
+
+  /* ── Topbar ── */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 14px;border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.08em;font-size:14px;}
+  .brand-mark{width:22px;height:22px;border:2px solid var(--amber);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--amber);font-size:11px;}
+  .summary-pill{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg-elev);color:var(--ink-dim);white-space:nowrap;}
+  .summary-pill.ok{color:var(--green);border-color:rgba(63,174,110,.4);}
+  .summary-pill.warn{color:var(--red);border-color:rgba(226,87,90,.4);}
+
+  /* ── Layout ── */
+  main{flex:1;padding:18px;padding-bottom:90px;overflow-y:auto;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ── Typography ── */
+  h2.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-dim);margin:22px 0 10px;}
+  h2.section-title:first-child{margin-top:0;}
+  p.hint{color:var(--ink-dim);font-size:13.5px;line-height:1.5;margin:0 0 14px;}
+  p.hint.small{font-size:12px;}
+  .note{font-size:11.5px;color:var(--ink-dim);margin-top:10px;}
+
+  /* ── Buttons ── */
+  button{font-family:inherit;}
+  .btn{appearance:none;border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);padding:14px 16px;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;width:100%;}
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--amber);color:var(--amber-ink);border-color:var(--amber);}
+  .btn-danger-outline{background:transparent;color:var(--red);border-color:rgba(226,87,90,.45);}
+  .btn-danger-outline.armed{background:var(--red);color:#fff;border-color:var(--red);}
+  .btn-row{display:flex;gap:10px;}
+  .btn-row .btn{width:auto;flex:1;}
+
+  /* ── Inputs ── */
+  textarea,input[type=text],input[type=password]{
+    width:100%;background:var(--bg-elev);border:1px solid var(--line);color:var(--ink);
+    border-radius:var(--radius);padding:13px 14px;font-family:'JetBrains Mono',monospace;
+    font-size:16px;resize:vertical;
+  }
+  textarea{min-height:140px;line-height:1.6;}
+  input[type=text]::placeholder,textarea::placeholder{color:#5b5f68;}
+  label.field-label{display:block;font-size:12.5px;color:var(--ink-dim);margin-bottom:6px;}
+
+  /* ── Cards / Stats ── */
+  .card{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:16px;}
+  .stat-row{display:flex;gap:10px;margin:14px 0;}
+  .stat{flex:1;background:var(--bg-elev-2);border-radius:10px;padding:12px 10px;text-align:center;}
+  .stat .num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;}
+  .stat .lab{font-size:10.5px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+  .stat.missing .num{color:var(--red);}
+  .stat.returned .num{color:var(--green);}
+  .stat.pending .num{color:var(--ink-dim);}
+
+  /* ── Mode toggle ── */
+  .mode-toggle{display:flex;background:var(--bg-elev);border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:16px;}
+  .mode-toggle button{flex:1;border:none;background:transparent;color:var(--ink-dim);padding:10px 0;border-radius:999px;font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;}
+  .mode-toggle button.active.out{background:var(--amber);color:var(--amber-ink);}
+  .mode-toggle button.active.in{background:var(--green);color:var(--green-ink);}
+
+  /* ── Manual entry ── */
+  .manual-card{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:16px;}
+  .manual-row{display:flex;gap:8px;}
+  .manual-row input{flex:1;min-width:0;font-size:20px;font-weight:700;letter-spacing:.03em;padding:16px 14px;text-transform:uppercase;}
+  .manual-row button{flex:0 0 88px;padding:0 10px;font-size:15px;}
+
+  /* ── Feedback card ── */
+  .feedback{margin-top:14px;border-radius:var(--radius);padding:16px;border:1px solid var(--line);background:var(--bg-elev);}
+  .feedback .fb-status{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px;}
+  .feedback .fb-name{font-size:17px;font-weight:700;}
+  .feedback .fb-code{font-family:'JetBrains Mono',monospace;color:var(--ink-dim);font-size:13px;margin-top:2px;}
+  .feedback.success-out{border-color:rgba(242,169,59,.5);} .feedback.success-out .fb-status{color:var(--amber);}
+  .feedback.success-in{border-color:rgba(63,174,110,.5);} .feedback.success-in .fb-status{color:var(--green);}
+  .feedback.notfound{border-color:rgba(226,87,90,.5);} .feedback.notfound .fb-status{color:var(--red);}
+  .feedback.already .fb-status{color:var(--ink-dim);}
+
+  /* ── Camera toggle button ── */
+  .camera-toggle-btn{
+    appearance:none;border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);
+    font-size:14px;font-weight:600;cursor:pointer;width:100%;
+    padding:13px 16px;border-radius:var(--radius);
+    display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;
+  }
+  .camera-toggle-btn:active{transform:scale(.98);}
+  .camera-toggle-btn.open{background:var(--bg-elev-2);border-color:var(--amber);color:var(--amber);}
+  .camera-toggle-btn .cam-icon{font-size:16px;}
+
+  /* ── Camera frame ── */
+  .scan-frame{position:relative;border-radius:var(--radius);overflow:hidden;background:#000;aspect-ratio:3/4;border:1px solid var(--line);}
+  #reader{width:100%;height:100%;}
+  #reader video{width:100%!important;height:100%!important;object-fit:cover;}
+  .corner{
+    position:absolute;width:26px;height:26px;border:3px solid var(--amber);
+    pointer-events:none;opacity:.9;transition:border-color .25s;
+  }
+  .corner.tl{top:14px;left:14px;border-right:none;border-bottom:none;border-radius:6px 0 0 0;}
+  .corner.tr{top:14px;right:14px;border-left:none;border-bottom:none;border-radius:0 6px 0 0;}
+  .corner.bl{bottom:14px;left:14px;border-right:none;border-top:none;border-radius:0 0 0 6px;}
+  .corner.br{bottom:14px;right:14px;border-left:none;border-top:none;border-radius:0 0 6px 0;}
+  .scan-frame.flash-success .corner{border-color:var(--green);}
+  .scan-frame.flash-error   .corner{border-color:var(--red);}
+  .scan-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--ink-dim);font-size:13px;text-align:center;padding:24px;}
+  .scan-controls{display:flex;gap:10px;margin-top:12px;}
+  .icon-btn{width:44px;flex:0 0 44px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);font-size:18px;cursor:pointer;}
+  .icon-btn.on{background:var(--amber);color:var(--amber-ink);border-color:var(--amber);}
+
+  /* ── Camera hint ── */
+  .cam-hint{
+    display:flex;align-items:center;gap:8px;margin-top:10px;
+    background:var(--bg-elev-2);border-radius:8px;padding:10px 12px;
+  }
+  .cam-hint-dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0;}
+  .cam-hint-text{font-size:12px;color:var(--ink-dim);line-height:1.4;}
+
+  /* ── List ── */
+  .search-wrap{margin-bottom:6px;}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 4px;border-bottom:1px solid var(--line);}
+  .row:last-child{border-bottom:none;}
+  .row-main{min-width:0;}
+  .row-name{font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .row-code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-dim);margin-top:2px;}
+  .row-actions{display:flex;gap:6px;flex:0 0 auto;}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.04em;border:1px solid var(--line);background:var(--bg-elev-2);color:var(--ink-dim);padding:7px 10px;border-radius:8px;cursor:pointer;}
+  .chip.chip-out.on{background:var(--amber);color:var(--amber-ink);border-color:var(--amber);}
+  .chip.chip-in.on{background:var(--green);color:var(--green-ink);border-color:var(--green);}
+  .chip-del{color:var(--red);border-color:transparent;background:transparent;padding:7px 8px;}
+  .empty-state{text-align:center;color:var(--ink-dim);font-size:13px;padding:30px 10px;}
+
+  /* ── Settings section dividers ── */
+  .settings-group{margin-bottom:24px;}
+  .settings-group:last-child{margin-bottom:0;}
+  .settings-desc{font-size:12.5px;color:var(--ink-dim);margin-top:8px;line-height:1.5;}
+
+  /* ── Toast ── */
+  .toast{
+    position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:#1e2128;border:1px solid var(--line);border-radius:999px;
+    padding:10px 20px;font-size:13.5px;font-weight:600;color:var(--ink);
+    white-space:nowrap;pointer-events:none;
+    opacity:0;transition:opacity .18s,transform .18s;
+    z-index:999;max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.toast-success-in{border-color:rgba(63,174,110,.5);color:var(--green);}
+  .toast.toast-success-out{border-color:rgba(242,169,59,.5);color:var(--amber);}
+  .toast.toast-error{border-color:rgba(226,87,90,.4);color:var(--red);}
+  .toast.toast-neutral{color:var(--ink-dim);}
+
+  /* ── Surveillance ── */
+  .surv-toggle{
+    appearance:none;width:100%;border:1px solid var(--line);background:transparent;
+    color:var(--ink-dim);font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    padding:11px 14px;border-radius:var(--radius);cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:28px;
+  }
+  .surv-toggle:active{opacity:.7;}
+  .surv-toggle .surv-badge{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    background:var(--bg-elev-2);border:1px solid var(--line);
+    border-radius:999px;padding:3px 9px;color:var(--ink-dim);
+  }
+  .surv-toggle .surv-badge.warn{color:var(--red);border-color:rgba(226,87,90,.4);}
+  .surv-toggle .surv-badge.ok{color:var(--green);border-color:rgba(63,174,110,.4);}
+  .surv-panel{margin-top:12px;}
+  .surv-row{
+    display:flex;align-items:center;gap:10px;
+    padding:11px 4px;border-bottom:1px solid var(--line);
+  }
+  .surv-row:last-child{border-bottom:none;}
+  .surv-name{flex:1;min-width:0;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .surv-qty{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    color:var(--ink-dim);background:var(--bg-elev-2);border:1px solid var(--line);
+    border-radius:6px;padding:5px 8px;white-space:nowrap;flex-shrink:0;
+  }
+  .surv-actions{display:flex;gap:6px;flex-shrink:0;}
+  .surv-check{
+    appearance:none;width:30px;height:30px;border:2px solid var(--line);
+    border-radius:8px;background:var(--bg-elev-2);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    position:relative;
+  }
+  .surv-check::after{content:'';display:none;}
+  .surv-check.checked{background:var(--green);border-color:var(--green);}
+  .surv-check.checked::after{
+    content:'✓';display:flex;position:absolute;inset:0;
+    align-items:center;justify-content:center;
+    color:var(--green-ink);font-size:15px;font-weight:700;
+  }
+  .surv-del{
+    appearance:none;background:transparent;border:none;color:var(--red);
+    font-size:16px;cursor:pointer;padding:4px 6px;flex-shrink:0;line-height:1;
+  }
+  .surv-add-row{display:flex;gap:8px;margin-top:12px;}
+  .surv-add-row input[type=text]{flex:1;min-width:0;padding:11px 12px;font-size:15px;}
+  .surv-qty-pick{
+    display:flex;background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;flex-shrink:0;
+  }
+  .surv-qty-pick button{
+    appearance:none;border:none;background:transparent;color:var(--ink-dim);
+    font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+    padding:0 14px;cursor:pointer;height:100%;
+  }
+  .surv-qty-pick button.active{background:var(--amber);color:var(--amber-ink);}
+  .surv-add-btn{flex-shrink:0;width:auto;padding:0 16px;font-size:14px;}
+
+  /* ── Sync ── */
+  .topright{display:flex;align-items:center;gap:8px;}
+  .sync-dot{width:11px;height:11px;border-radius:50%;background:#5b5f68;cursor:pointer;flex-shrink:0;}
+  .sync-dot.ok{background:var(--green);}
+  .sync-dot.busy{background:var(--amber);}
+  .sync-dot.err{background:var(--red);}
+  .sync-dot.ro{background:#6ea8fe;}
+  .sync-banner{display:none;margin-bottom:16px;padding:12px 14px;border-radius:var(--radius);border:1px solid rgba(242,169,59,.45);background:var(--bg-elev);font-size:13px;line-height:1.5;color:var(--ink);}
+  .field-gap{height:10px;}
+
+  /* ── Tab bar ── */
+  .tabbar{
+    position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;
+    display:flex;background:var(--bg-elev);border-top:1px solid var(--line);
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  }
+  .tab{flex:1;background:none;border:none;color:var(--ink-dim);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:8px 0;border-radius:10px;cursor:pointer;}
+  .tab.active{color:var(--amber);background:rgba(242,169,59,.08);}
+  ::-webkit-scrollbar{width:0;height:0;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><span class="brand-mark">◎</span> WALKIE CHECK</div>
+    <div class="topright">
+      <span class="sync-dot" id="syncDot" title="Sync status"></span>
+      <div class="summary-pill" id="summaryPill">— loading —</div>
+    </div>
+  </div>
+
+  <main>
+    <div class="sync-banner" id="syncBanner">Sync isn't set up on this device yet. Open <b>Settings → Sync</b> and paste the shared GitHub token.</div>
+    <!-- SETUP -->
+    <section class="view active" id="view-setup">
+      <div id="setup-empty">
+        <h2 class="section-title">Load your roster</h2>
+        <p class="hint">Paste straight from your spreadsheet — Name and Code columns (extra columns like checkboxes are ignored automatically).</p>
+        <label class="field-label">Roster</label>
+        <textarea id="rosterInput" placeholder="Aria Noll	CG001940&#10;J. Wilmington	CG001971&#10;..."></textarea>
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="loadRosterBtn">Load list</button>
+      </div>
+
+      <div id="setup-loaded" style="display:none;">
+        <h2 class="section-title">Session</h2>
+        <div class="card">
+          <div class="stat-row" id="setupStats"></div>
+          <div class="note">Synced through GitHub — everyone on this link sees the same list, refreshed every few seconds.</div>
+        </div>
+
+        <h2 class="section-title">Add more people</h2>
+        <p class="hint small">Paste or type new rows — Name + Code per line. Merges into the existing list without touching anyone already on it.</p>
+        <textarea id="addMoreInput" placeholder="New Person	CG002104" style="min-height:90px;"></textarea>
+        <div style="height:10px"></div>
+        <button class="btn" id="addMoreBtn">Add to list</button>
+        <div id="addMoreMsg" class="note" style="display:none;"></div>
+      </div>
+    </section>
+
+    <!-- SCAN -->
+    <section class="view" id="view-scan">
+      <div class="mode-toggle">
+        <button class="active in" data-mode="in" id="modeInBtn">Check In</button>
+        <button class="out" data-mode="out" id="modeOutBtn">Check Out</button>
+      </div>
+
+      <div class="manual-card">
+        <label class="field-label">Type the code printed under the barcode</label>
+        <div class="manual-row">
+          <input type="text" id="manualInput" placeholder="CG001940" autocapitalize="characters" autocomplete="off" autocorrect="off" inputmode="text">
+          <button class="btn btn-primary" id="manualBtn">Mark</button>
+        </div>
+      </div>
+
+      <div class="feedback" id="feedback" style="display:none;">
+        <div class="fb-status" id="fbStatus"></div>
+        <div class="fb-name" id="fbName"></div>
+        <div class="fb-code" id="fbCode"></div>
+      </div>
+
+      <button class="camera-toggle-btn" id="cameraToggleBtn"><span class="cam-icon">📷</span> Try camera scan instead</button>
+
+      <div id="cameraSection" style="display:none;">
+        <p class="hint small" style="margin-top:12px;">Camera needs permission. If it's blocked instantly (no prompt), check the browser's camera permission for this site.</p>
+        <div class="scan-frame" id="scanFrame">
+          <div id="reader"></div>
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="scan-placeholder" id="scanPlaceholder">Tap "Start camera" and point it at the barcode on the walkie.</div>
+        </div>
+        <div class="cam-hint">
+          <div class="cam-hint-dot"></div>
+          <div class="cam-hint-text" id="camHintText">When the frame corners turn green, the walkie has been checked in successfully.</div>
+        </div>
+        <div class="scan-controls">
+          <button class="btn btn-primary" id="toggleScanBtn" style="flex:1;">Start camera</button>
+          <button class="icon-btn" id="torchBtn" style="display:none;">⚡</button>
+          <button class="icon-btn" id="switchCamBtn" style="display:none;">⟲</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIST -->
+    <section class="view" id="view-list">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Search name or code…">
+      </div>
+      <div id="listContent"></div>
+
+      <!-- Surveillance — collapsed by default -->
+      <button class="surv-toggle" id="survToggle">
+        <span>📡 Surveillance headsets</span>
+        <span class="surv-badge" id="survBadge">—</span>
+      </button>
+      <div class="surv-panel" id="survPanel" style="display:none;">
+        <div id="survList"></div>
+        <div class="surv-add-row">
+          <input type="text" id="survNameInput" placeholder="Name" autocomplete="off" autocorrect="off">
+          <div class="surv-qty-pick" id="survQtyPick">
+            <button class="active" data-qty="1">×1</button>
+            <button data-qty="2">×2</button>
+          </div>
+          <button class="btn btn-primary surv-add-btn" id="survAddBtn">Add</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="view-settings">
+      <h2 class="section-title">Session</h2>
+      <div class="settings-group">
+        <button class="btn" id="newSessionBtn">Start new session</button>
+        <p class="settings-desc">Keeps all names and walkie codes but clears every check-in and check-out mark. Use this at the start of a new event day.</p>
+      </div>
+
+      <h2 class="section-title">Export</h2>
+      <div class="settings-group">
+        <button class="btn" id="exportBtn">Export CSV</button>
+        <p class="settings-desc">Downloads a spreadsheet with Name, Code, and current check-in / check-out status for every walkie on the list.</p>
+      </div>
+
+      <h2 class="section-title">Sync</h2>
+      <div class="settings-group">
+        <label class="field-label">GitHub token (shared by your team)</label>
+        <input type="password" id="ghToken" placeholder="github_pat_..." autocomplete="off" autocapitalize="off" autocorrect="off">
+        <div class="field-gap"></div>
+        <label class="field-label">Repository (owner/name)</label>
+        <input type="text" id="ghRepo" placeholder="yourname/walkie-check" autocomplete="off" autocapitalize="off" autocorrect="off">
+        <div class="field-gap"></div>
+        <label class="field-label">Data branch</label>
+        <input type="text" id="ghBranch" placeholder="data" autocomplete="off" autocapitalize="off" autocorrect="off">
+        <div class="field-gap"></div>
+        <button class="btn btn-primary" id="ghSaveBtn">Save &amp; sync now</button>
+        <p class="settings-desc" id="ghStatusText">—</p>
+      </div>
+
+      <h2 class="section-title">Danger zone</h2>
+      <div class="settings-group">
+        <button class="btn btn-danger-outline" id="clearRosterBtn">Replace list</button>
+        <p class="settings-desc">Wipes the entire roster so you can paste a fresh one. Tap twice to confirm — this can't be undone.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="setup">Setup</button>
+    <button class="tab" data-view="scan">Scan</button>
+    <button class="tab" data-view="list">List</button>
+    <button class="tab" data-view="settings">Settings</button>
+  </nav>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var ROSTER_KEY = "walkie-roster";
+  var SURV_KEY   = "walkie-surv";
+  var roster = [];
+  var survList = [];   // [{id, name, qty, returned}]
+  var survOpen = false;
+  var survQty  = 1;
+  var mode = "in";
+  var scanning = false;
+  var html5QrCode = null;
+  var torchOn = false;
+  var cameraList = [];
+  var cameraIndex = 0;
+  var lastScan = { code: null, time: 0 };
+  var clearArmed = false;
+  var clearTimer = null;
+  var cameraOpen = false;
+  var toastTimer = null;
+
+  // ---------- Sync engine: data.json in the GitHub repo is the source of truth ----------
+  // Every record carries per-field timestamps (outT, inT, delT, ...). When two people
+  // edit at once, the newer change to each field wins, so nobody overwrites anybody.
+  var GH_KEY = "walkie-gh", CACHE_KEY = "walkie-cache";
+  var DATA_PATH = "data.json";
+  var POLL_MS = 5000;
+  var gh = loadGhConfig();
+  var localVer = 0, syncedVer = 0;
+  var syncing = false, syncAgain = false, saveTimer = null;
+  var etag = null, syncMsg = "Not synced yet";
+
+  function loadGhConfig(){
+    var c = {};
+    try{ c = JSON.parse(localStorage.getItem(GH_KEY) || "{}"); }catch(e){}
+    var repo = c.repo || "";
+    if (!repo && /\.github\.io$/.test(location.hostname)){
+      var seg = location.pathname.split("/")[1];
+      if (seg) repo = location.hostname.split(".")[0] + "/" + seg;
+    }
+    return { token: c.token || "", repo: repo, branch: c.branch || "data" };
+  }
+  function saveGhConfig(){
+    try{ localStorage.setItem(GH_KEY, JSON.stringify(gh)); }catch(e){}
+  }
+
+  function cacheLoad(){
+    try{
+      var c = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+      if (c){ roster = c.roster || []; survList = c.surv || []; }
+    }catch(e){}
+  }
+  function cacheSave(){
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({roster:roster, surv:survList})); }catch(e){}
+  }
+
+  function liveRoster(){ return roster.filter(function(r){ return !r.del; }); }
+
+  var ROSTER_FIELDS = [["out","outT"],["in","inT"],["del","delT"],["name","nameT"]];
+  var SURV_FIELDS   = [["returned","retT"],["del","delT"]];
+
+  // Merge two lists of records keyed by `key`. Remote order is kept; new local items go last.
+  function mergeList(remoteList, localList, key, fields){
+    var out = remoteList.map(function(r){ return JSON.parse(JSON.stringify(r)); });
+    var idx = {};
+    out.forEach(function(r, i){ idx[r[key]] = i; });
+    localList.forEach(function(l){
+      var i = idx[l[key]];
+      if (i === undefined){
+        idx[l[key]] = out.length;
+        out.push(JSON.parse(JSON.stringify(l)));
+        return;
+      }
+      var r = out[i];
+      fields.forEach(function(f){
+        if ((l[f[1]] || 0) > (r[f[1]] || 0)){ r[f[0]] = l[f[0]]; r[f[1]] = l[f[1]]; }
+      });
+    });
+    return out;
+  }
+
+  function normalizeRemote(obj){
+    // Accepts the old server format ({"walkie-roster": "<json string>"}) and the new one.
+    if (obj && typeof obj["walkie-roster"] === "string"){
+      return {
+        roster: JSON.parse(obj["walkie-roster"] || "[]"),
+        surv: JSON.parse(obj["walkie-surv"] || "[]")
+      };
+    }
+    return { roster: (obj && obj.roster) || [], surv: (obj && obj.surv) || [] };
+  }
+
+  function b64encode(str){ return btoa(unescape(encodeURIComponent(str))); }
+  function b64decode(b64){ return decodeURIComponent(escape(atob(b64.replace(/\s/g, "")))); }
+
+  function ghUrl(){
+    return "https://api.github.com/repos/" + gh.repo + "/contents/" + DATA_PATH +
+           "?ref=" + encodeURIComponent(gh.branch);
+  }
+  function ghHeaders(extra){
+    var h = { "Accept": "application/vnd.github+json" };
+    if (gh.token) h["Authorization"] = "Bearer " + gh.token;
+    for (var k in (extra||{})) h[k] = extra[k];
+    return h;
+  }
+
+  async function ghGet(useEtag){
+    var extra = (useEtag && etag) ? { "If-None-Match": etag } : {};
+    var r = await fetch(ghUrl(), { headers: ghHeaders(extra), cache: "no-store" });
+    if (r.status === 304) return { notModified: true };
+    if (r.status === 404) return { data: { roster: [], surv: [] }, sha: null, etag: null };
+    if (r.status === 401) throw new Error("Token rejected — check it's copied correctly and hasn't expired.");
+    if (r.status === 403) throw new Error("GitHub refused the request (token permissions or rate limit).");
+    if (!r.ok) throw new Error("GitHub error " + r.status);
+    var j = await r.json();
+    var data = normalizeRemote(JSON.parse(b64decode(j.content)));
+    return { data: data, sha: j.sha, etag: r.headers.get("ETag") };
+  }
+
+  // returns {ok:true} | {conflict:true}; throws on real errors
+  async function ghPut(data, sha){
+    var body = {
+      message: "walkie sync " + new Date().toISOString(),
+      content: b64encode(JSON.stringify(data, null, 1)),
+      branch: gh.branch
+    };
+    if (sha) body.sha = sha;
+    var r = await fetch("https://api.github.com/repos/" + gh.repo + "/contents/" + DATA_PATH, {
+      method: "PUT",
+      headers: ghHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(body)
+    });
+    if (r.ok) return { ok: true };
+    var msg = "";
+    try{ msg = (await r.json()).message || ""; }catch(e){}
+    if (r.status === 409) return { conflict: true };
+    if (r.status === 422 && /sha/i.test(msg)) return { conflict: true };
+    if (r.status === 401) throw new Error("Token rejected — check it's copied correctly and hasn't expired.");
+    if (r.status === 403) throw new Error("Token can't write to this repo (needs Contents: Read and write).");
+    if (r.status === 404) throw new Error("Repo or branch not found — check the repo name and that the branch \"" + gh.branch + "\" exists.");
+    throw new Error("Couldn't save to GitHub (" + r.status + (msg ? ": " + msg : "") + ")");
+  }
+
+  function setSync(state, msg){
+    syncMsg = msg;
+    var dot = document.getElementById("syncDot");
+    if (dot) dot.className = "sync-dot " + state;
+    var t = document.getElementById("ghStatusText");
+    if (t) t.textContent = msg;
+    var banner = document.getElementById("syncBanner");
+    if (banner) banner.style.display = (!gh.token) ? "block" : "none";
+  }
+
+  async function sync(){
+    if (!gh.repo){ setSync("err", "Enter the repository (owner/name) in Settings → Sync."); return; }
+    if (syncing){ syncAgain = true; return; }
+    syncing = true;
+    try{
+      var done = false;
+      for (var attempt = 0; attempt < 5 && !done; attempt++){
+        var clean = (localVer === syncedVer);
+        var rem = await ghGet(clean);
+        if (rem.notModified){
+          setSync(gh.token ? "ok" : "ro", gh.token ? "Synced " + new Date().toLocaleTimeString() : "View only — add a token to save changes.");
+          done = true; break;
+        }
+        etag = rem.etag;
+        var v0 = localVer;
+        var merged = {
+          roster: mergeList(rem.data.roster, roster, "code", ROSTER_FIELDS),
+          surv:   mergeList(rem.data.surv,   survList, "id", SURV_FIELDS)
+        };
+        if (gh.token && JSON.stringify(merged) !== JSON.stringify(rem.data)){
+          var res = await ghPut(merged, rem.sha);
+          if (res.conflict){ etag = null; continue; }   // someone saved first: re-read and merge again
+          etag = null;
+        }
+        // Re-merge with the live local state in case the user tapped something during the request.
+        var before = JSON.stringify([roster, survList]);
+        roster   = mergeList(merged.roster, roster,   "code", ROSTER_FIELDS);
+        survList = mergeList(merged.surv,   survList, "id",   SURV_FIELDS);
+        if (JSON.stringify([roster, survList]) !== before){ renderAll(); renderSurv(); }
+        cacheSave();
+        if (gh.token) syncedVer = v0;
+        if (localVer !== v0) syncAgain = true;
+        setSync(gh.token ? "ok" : "ro", gh.token ? "Synced " + new Date().toLocaleTimeString() : "View only — add a token to save changes.");
+        done = true;
+      }
+      if (!done) setSync("err", "GitHub was busy — will retry in a moment.");
+    }catch(e){
+      var offline = (e instanceof TypeError);
+      setSync("err", offline ? "Offline — changes are kept on this device and will sync when you're back." : e.message);
+    }
+    syncing = false;
+    if (syncAgain){ syncAgain = false; setTimeout(sync, 300); }
+  }
+
+  // Called after any local edit
+  function localChanged(){
+    localVer++;
+    cacheSave();
+    setSync("busy", "Saving…");
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(sync, 400);
+  }
+  function saveRoster(){ localChanged(); }
+  function saveSurv(){ localChanged(); }
+
+  function replaceRoster(parsed){
+    var now = Date.now(), keep = {};
+    parsed.forEach(function(p){ keep[p.code] = true; });
+    roster.forEach(function(r){ if (!keep[r.code] && !r.del){ r.del = true; r.delT = now; } });
+    parsed.forEach(function(p){
+      var old = roster.find(function(r){ return r.code === p.code; });
+      if (old){
+        old.del = false; old.delT = now; old.name = p.name; old.nameT = now;
+        old.out = false; old.outT = now; old.in = false; old.inT = now;
+      } else {
+        p.outT = now; p.inT = now; p.nameT = now; roster.push(p);
+      }
+    });
+    saveRoster(); renderAll();
+  }
+
+  function initSync(){
+    cacheLoad();
+    renderAll(); renderSurv();
+    document.getElementById("ghToken").value  = gh.token;
+    document.getElementById("ghRepo").value   = gh.repo;
+    document.getElementById("ghBranch").value = gh.branch;
+    setSync("busy", "Connecting…");
+    sync();
+    setInterval(function(){ if (!document.hidden) sync(); }, POLL_MS);
+    document.addEventListener("visibilitychange", function(){ if (!document.hidden) sync(); });
+  }
+
+  // ---------- Surveillance render ----------
+  function renderSurv(){
+    var badge  = document.getElementById("survBadge");
+    var listEl = document.getElementById("survList");
+    var vis    = survList.filter(function(r){ return !r.del; });
+    var total  = vis.reduce(function(s,r){ return s + r.qty; }, 0);
+    var back   = vis.filter(function(r){ return r.returned; }).reduce(function(s,r){ return s + r.qty; }, 0);
+    var missing = total - back;
+
+    if (total === 0){
+      badge.textContent = "—"; badge.className = "surv-badge";
+    } else if (missing > 0){
+      badge.textContent = back + "/" + total + " back"; badge.className = "surv-badge warn";
+    } else {
+      badge.textContent = "all back"; badge.className = "surv-badge ok";
+    }
+
+    if (!vis.length){
+      listEl.innerHTML = '<div style="color:var(--ink-dim);font-size:13px;padding:14px 4px;">No headsets added yet. Use the field below.</div>';
+      return;
+    }
+    listEl.innerHTML = vis.map(function(item){
+      var qtyLabel = item.qty > 1 ? "×" + item.qty + " headsets" : "×1 headset";
+      return '<div class="surv-row" data-sid="'+item.id+'">' +
+        '<div class="surv-name">'+escapeHtml(item.name)+'</div>'+
+        '<div class="surv-qty">'+qtyLabel+'</div>'+
+        '<div class="surv-actions">'+
+          '<button class="surv-check '+(item.returned?"checked":"")+ '" data-scheck="'+item.id+'" title="Toggle returned"></button>'+
+          '<button class="surv-del" data-sdel="'+item.id+'" title="Remove">×</button>'+
+        '</div>'+
+      '</div>';
+    }).join("");
+
+    listEl.querySelectorAll("[data-scheck]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-scheck");
+        var item = survList.find(function(r){ return r.id===id; });
+        if (!item) return;
+        item.returned = !item.returned; item.retT = Date.now();
+        saveSurv(); renderSurv();
+      });
+    });
+    listEl.querySelectorAll("[data-sdel]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-sdel");
+        var item = survList.find(function(r){ return r.id===id; });
+        if (!item) return;
+        item.del = true; item.delT = Date.now();
+        saveSurv(); renderSurv();
+      });
+    });
+  }
+
+  // ---------- Toast ----------
+  function showToast(msg, type){
+    // type: 'success-in' | 'success-out' | 'error' | 'neutral'
+    var el = document.getElementById("toast");
+    clearTimeout(toastTimer);
+    el.textContent = msg;
+    el.className = "toast toast-" + type + " show";
+    toastTimer = setTimeout(function(){
+      el.classList.remove("show");
+    }, 2000);
+  }
+
+  // ---------- Camera frame flash ----------
+  function flashFrame(type){
+    // type: 'success' | 'error'
+    var frame = document.getElementById("scanFrame");
+    frame.classList.remove("flash-success","flash-error");
+    // Force reflow so removing+re-adding the class always triggers transition
+    void frame.offsetWidth;
+    frame.classList.add("flash-" + type);
+    setTimeout(function(){ frame.classList.remove("flash-" + type); }, 900);
+  }
+
+  // ---------- Parsing ----------
+  function isBooleanish(token){
+    return /^(true|false|yes|no|x|✓|✔|0|1)$/i.test(token.trim());
+  }
+  function looksLikeCode(token){
+    return /^[A-Za-z0-9-]{3,20}$/.test(token) && /\d/.test(token);
+  }
+  function parseRosterText(text){
+    var lines = text.split(/\r?\n/).map(function(l){return l.trim();}).filter(Boolean);
+    var items = [];
+    var seen = {};
+    lines.forEach(function(line){
+      var parts;
+      if (line.indexOf("\t") !== -1) parts = line.split("\t");
+      else if (line.indexOf(",") !== -1) parts = line.split(",");
+      else parts = line.split(/\s{2,}/);
+      parts = parts.map(function(p){return p.trim();}).filter(function(p){
+        return p && !isBooleanish(p);
+      });
+      if (parts.length === 0) return;
+      var codeIdx = -1;
+      for (var i = parts.length - 1; i >= 0; i--){
+        if (looksLikeCode(parts[i])){ codeIdx = i; break; }
+      }
+      var code, name;
+      if (codeIdx !== -1){
+        code = parts[codeIdx];
+        name = parts.filter(function(_, idx){ return idx !== codeIdx; }).join(" ");
+      } else {
+        code = parts[parts.length - 1];
+        name = parts.slice(0, parts.length - 1).join(" ");
+      }
+      if (!code) return;
+      code = code.toUpperCase();
+      if (seen[code]) return;
+      seen[code] = true;
+      items.push({ code: code, name: name || "(no name)", out: false, in: false });
+    });
+    return items;
+  }
+
+  // ---------- Stats ----------
+  function stats(){
+    var roster = liveRoster();
+    var total = roster.length;
+    var out = roster.filter(function(r){return r.out;}).length;
+    var inn = roster.filter(function(r){return r.in;}).length;
+    var missing = roster.filter(function(r){return r.out && !r.in;}).length;
+    var untouched = roster.filter(function(r){return !r.out && !r.in;}).length;
+    return { total:total, out:out, in:inn, missing:missing, untouched:untouched };
+  }
+
+  // ---------- Rendering ----------
+  function renderAll(){
+    renderSummaryPill();
+    renderSetup();
+    renderList();
+  }
+
+  function renderSummaryPill(){
+    var pill = document.getElementById("summaryPill");
+    var s = stats();
+    if (s.total === 0){ pill.textContent = "no roster loaded"; pill.className = "summary-pill"; return; }
+    if (s.missing > 0){ pill.textContent = s.missing + " missing"; pill.className = "summary-pill warn"; }
+    else if (s.in === s.total){ pill.textContent = "all returned"; pill.className = "summary-pill ok"; }
+    else { pill.textContent = s.in + "/" + s.total + " back"; pill.className = "summary-pill"; }
+  }
+
+  function renderSetup(){
+    var s = stats();
+    document.getElementById("setup-empty").style.display  = s.total === 0 ? "block" : "none";
+    document.getElementById("setup-loaded").style.display = s.total === 0 ? "none"  : "block";
+    if (s.total === 0) return;
+    document.getElementById("setupStats").innerHTML =
+      '<div class="stat pending"><div class="num">'+s.untouched+'</div><div class="lab">Not Out</div></div>'+
+      '<div class="stat missing"><div class="num">'+s.missing+'</div><div class="lab">Missing</div></div>'+
+      '<div class="stat returned"><div class="num">'+s.in+'/'+s.total+'</div><div class="lab">Returned</div></div>';
+  }
+
+  function renderList(){
+    var roster = liveRoster();
+    var q = (document.getElementById("searchInput").value || "").trim().toUpperCase();
+    var listEl = document.getElementById("listContent");
+    if (roster.length === 0){ listEl.innerHTML = '<div class="empty-state">No roster yet. Load one from the Setup tab.</div>'; return; }
+    var filtered = roster.filter(function(r){
+      if (!q) return true;
+      return r.name.toUpperCase().indexOf(q) !== -1 || r.code.indexOf(q) !== -1;
+    });
+    var missing   = filtered.filter(function(r){return r.out && !r.in;});
+    var returned  = filtered.filter(function(r){return r.in;});
+    var untouched = filtered.filter(function(r){return !r.out && !r.in;});
+    var html = renderSection("Not Returned",missing) + renderSection("Returned",returned) + renderSection("Not Checked Out",untouched);
+    if (!html) html = '<div class="empty-state">No matches.</div>';
+    listEl.innerHTML = html;
+    listEl.querySelectorAll("[data-toggle]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var code = btn.getAttribute("data-code");
+        var field = btn.getAttribute("data-toggle");
+        var item = roster.find(function(r){return r.code === code;});
+        if (!item) return;
+        item[field] = !item[field];
+        item[field+"T"] = Date.now();
+        saveRoster(); renderAll();
+      });
+    });
+    listEl.querySelectorAll("[data-del]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var code = btn.getAttribute("data-del");
+        var gone = roster.find(function(r){return r.code === code;});
+        if (!gone) return;
+        gone.del = true; gone.delT = Date.now();
+        saveRoster(); renderAll();
+      });
+    });
+  }
+
+  function renderSection(title, items){
+    if (!items.length) return "";
+    return '<h2 class="section-title">'+title+' ('+items.length+')</h2>'+
+      items.map(function(r){
+        var flag = r.unlisted ? ' <span style="color:var(--red);font-weight:700;">⚠ UNLISTED</span>' : '';
+        return '<div class="row">'+
+          '<div class="row-main"><div class="row-name">'+escapeHtml(r.name)+flag+'</div><div class="row-code">'+r.code+'</div></div>'+
+          '<div class="row-actions">'+
+            '<button class="chip chip-out '+(r.out?"on":"")+'" data-toggle="out" data-code="'+r.code+'">OUT</button>'+
+            '<button class="chip chip-in  '+(r.in?"on":"")+ '" data-toggle="in"  data-code="'+r.code+'">IN</button>'+
+            '<button class="chip chip-del" data-del="'+r.code+'">×</button>'+
+          '</div></div>';
+      }).join("");
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c];});
+  }
+
+  // ---------- Cam hint text ----------
+  function updateCamHint(){
+    var txt = document.getElementById("camHintText");
+    if (!txt) return;
+    txt.textContent = mode === "in"
+      ? "When the frame corners turn green, the walkie has been checked in successfully."
+      : "When the frame corners turn green, the walkie has been checked out successfully.";
+  }
+
+  // ---------- Code handling ----------
+  function vibrate(pattern){ if (navigator.vibrate){ try{ navigator.vibrate(pattern); }catch(e){} } }
+
+  function handleCode(raw){
+    var code = (raw || "").trim().toUpperCase();
+    if (!code) return;
+    var now = Date.now();
+    if (lastScan.code === code && now - lastScan.time < 1200) return;
+    lastScan = { code: code, time: now };
+
+    var item = roster.find(function(r){ return r.code === code; });
+    document.getElementById("feedback").style.display = "block";
+
+    if (item && item.del){ item.del = false; item.delT = now; }   // scanning a removed walkie brings it back
+
+    if (!item){
+      item = { code: code, name: "NOT ON LIST", out: false, in: false, outT: now, inT: now, unlisted: true };
+      roster.push(item);
+      flashFrame("error");
+      vibrate([90,60,90]);
+    }
+
+    if (mode === "in"){
+      if (item.in){
+        setFeedback("already","ALREADY CHECKED IN", item.name, item.code);
+        showToast("Already checked in — " + item.name, "neutral");
+        vibrate(70);
+        return;
+      }
+      item.in = true; item.inT = now;
+      if (item.unlisted){
+        setFeedback("notfound","⚠ NOT ON LIST — ADDED & CHECKED IN", item.name, item.code);
+        showToast("⚠ Not on list — added & checked in: " + item.code, "error");
+      } else {
+        setFeedback("success-in","✓ CHECKED IN", item.name, item.code);
+        showToast("✓ Checked in — " + item.name, "success-in");
+      }
+      flashFrame("success");
+    } else {
+      if (item.out){
+        setFeedback("already","ALREADY CHECKED OUT", item.name, item.code);
+        showToast("Already checked out — " + item.name, "neutral");
+        vibrate(70);
+        return;
+      }
+      item.out = true; item.outT = now;
+      if (item.unlisted){
+        setFeedback("notfound","⚠ NOT ON LIST — ADDED & CHECKED OUT", item.name, item.code);
+        showToast("⚠ Not on list — added & checked out: " + item.code, "error");
+      } else {
+        setFeedback("success-out","✓ CHECKED OUT", item.name, item.code);
+        showToast("✓ Checked out — " + item.name, "success-out");
+      }
+      flashFrame("success");
+    }
+    vibrate(140);
+    saveRoster(); renderSummaryPill(); renderSetup(); renderList();
+  }
+
+  function setFeedback(cls, status, name, code){
+    var fb = document.getElementById("feedback");
+    fb.className = "feedback " + cls;
+    document.getElementById("fbStatus").textContent = status;
+    document.getElementById("fbName").textContent   = name;
+    document.getElementById("fbCode").textContent   = code;
+  }
+
+  // ---------- Camera ----------
+  function onScanSuccess(decodedText){ handleCode(decodedText); }
+  function onScanFailure(){}
+
+  async function startScanner(){
+    if (scanning) return;
+    document.getElementById("scanPlaceholder").style.display = "none";
+    html5QrCode = new Html5Qrcode("reader");
+    var config = {
+      fps:10, qrbox:{width:270,height:150},
+      formatsToSupport:[
+        Html5QrcodeSupportedFormats.CODE_128,Html5QrcodeSupportedFormats.CODE_39,
+        Html5QrcodeSupportedFormats.CODE_93,Html5QrcodeSupportedFormats.CODABAR,
+        Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,
+        Html5QrcodeSupportedFormats.UPC_A,Html5QrcodeSupportedFormats.UPC_E,
+        Html5QrcodeSupportedFormats.ITF,Html5QrcodeSupportedFormats.QR_CODE
+      ]
+    };
+    try{
+      await html5QrCode.start({facingMode:"environment"}, config, onScanSuccess, onScanFailure);
+      scanning = true;
+      document.getElementById("toggleScanBtn").textContent = "Stop camera";
+      document.getElementById("switchCamBtn").style.display = "flex";
+      checkTorchAvailability();
+    }catch(err){
+      document.getElementById("scanPlaceholder").style.display = "flex";
+      document.getElementById("scanPlaceholder").textContent =
+        "Camera blocked (" + (err && err.message ? err.message : "permission denied") + "). Check the browser's camera permission for this site, or type the code above.";
+      html5QrCode = null;
+    }
+  }
+
+  async function stopScanner(){
+    if (!scanning || !html5QrCode) return;
+    try{ await html5QrCode.stop(); html5QrCode.clear(); }catch(e){}
+    scanning = false; torchOn = false;
+    document.getElementById("toggleScanBtn").textContent = "Start camera";
+    document.getElementById("torchBtn").style.display = "none";
+    document.getElementById("switchCamBtn").style.display = "none";
+    document.getElementById("scanPlaceholder").style.display = "flex";
+    document.getElementById("scanPlaceholder").textContent = 'Tap "Start camera" and point it at the barcode on the walkie.';
+  }
+
+  function checkTorchAvailability(){
+    try{
+      var caps = html5QrCode.getRunningTrackCameraCapabilities();
+      if (caps && caps.torchFeature && caps.torchFeature().isSupported())
+        document.getElementById("torchBtn").style.display = "flex";
+    }catch(e){}
+  }
+
+  async function toggleTorch(){
+    if (!html5QrCode || !scanning) return;
+    try{
+      var caps = html5QrCode.getRunningTrackCameraCapabilities();
+      torchOn = !torchOn;
+      await caps.torchFeature().apply(torchOn);
+      document.getElementById("torchBtn").classList.toggle("on", torchOn);
+    }catch(e){}
+  }
+
+  async function switchCamera(){
+    if (!html5QrCode) return;
+    try{
+      if (!cameraList.length) cameraList = await Html5Qrcode.getCameras();
+      if (cameraList.length < 2) return;
+      cameraIndex = (cameraIndex + 1) % cameraList.length;
+      await html5QrCode.stop();
+      var config = {fps:10, qrbox:{width:270,height:150}};
+      await html5QrCode.start(cameraList[cameraIndex].id, config, onScanSuccess, onScanFailure);
+    }catch(e){}
+  }
+
+  // ---------- View switching ----------
+  function switchView(name){
+    document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+    document.getElementById("view-"+name).classList.add("active");
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.classList.toggle("active", t.getAttribute("data-view") === name);
+    });
+    if (name !== "scan" && scanning) stopScanner();
+    if (name === "scan"){
+      setTimeout(function(){ document.getElementById("manualInput").focus(); }, 60);
+    }
+  }
+
+  // ---------- Wire up ----------
+  document.querySelectorAll(".tab").forEach(function(t){
+    t.addEventListener("click", function(){ switchView(t.getAttribute("data-view")); });
+  });
+
+  document.getElementById("loadRosterBtn").addEventListener("click", function(){
+    var parsed = parseRosterText(document.getElementById("rosterInput").value);
+    if (!parsed.length) return;
+    replaceRoster(parsed);
+  });
+
+  document.getElementById("addMoreBtn").addEventListener("click", function(){
+    var parsed = parseRosterText(document.getElementById("addMoreInput").value);
+    var msg = document.getElementById("addMoreMsg");
+    if (!parsed.length){ msg.style.display="block"; msg.textContent="Nothing recognized — check format and try again."; return; }
+    var existing = {};
+    liveRoster().forEach(function(r){ existing[r.code]=true; });
+    var added=0, skipped=0, nowT=Date.now();
+    parsed.forEach(function(item){
+      if (existing[item.code]){ skipped++; return; }
+      var old = roster.find(function(r){ return r.code===item.code; });
+      if (old){
+        old.del=false; old.delT=nowT; old.name=item.name; old.nameT=nowT;
+        old.out=false; old.outT=nowT; old.in=false; old.inT=nowT;
+      } else {
+        item.outT=nowT; item.inT=nowT; item.nameT=nowT; roster.push(item);
+      }
+      existing[item.code]=true; added++;
+    });
+    saveRoster(); renderAll();
+    document.getElementById("addMoreInput").value = "";
+    msg.style.display="block";
+    msg.textContent = "Added "+added+(skipped?", skipped "+skipped+" already on the list":"")+"." ;
+  });
+
+  document.getElementById("newSessionBtn").addEventListener("click", function(){
+    var nowT = Date.now();
+    liveRoster().forEach(function(r){ r.out=false; r.outT=nowT; r.in=false; r.inT=nowT; });
+    saveRoster(); renderAll();
+  });
+
+  document.getElementById("clearRosterBtn").addEventListener("click", function(){
+    var btn = this;
+    if (!clearArmed){
+      clearArmed = true;
+      btn.textContent = "Tap again to confirm";
+      btn.classList.add("armed");
+      clearTimer = setTimeout(function(){
+        clearArmed = false;
+        btn.textContent = "Replace list";
+        btn.classList.remove("armed");
+      }, 3000);
+      return;
+    }
+    clearTimeout(clearTimer);
+    clearArmed = false;
+    btn.textContent = "Replace list";
+    btn.classList.remove("armed");
+    var nowT = Date.now();
+    roster.forEach(function(r){ if (!r.del){ r.del=true; r.delT=nowT; } });
+    document.getElementById("rosterInput").value = "";
+    saveRoster(); renderAll();
+  });
+
+  document.getElementById("exportBtn").addEventListener("click", function(){
+    var header = "Name,Code,Status\n";
+    var rows = liveRoster().map(function(r){
+      var status = r.in ? "Checked In" : r.out ? "Checked Out" : "Unmarked";
+      return '"'+r.name.replace(/"/g,'""')+'",'+r.code+',"'+status+'"';
+    }).join("\n");
+    var blob = new Blob([header+rows],{type:"text/csv"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href=url; a.download="walkie-check-"+new Date().toISOString().slice(0,10)+".csv";
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+
+  document.getElementById("ghSaveBtn").addEventListener("click", function(){
+    gh.token  = document.getElementById("ghToken").value.trim();
+    gh.repo   = document.getElementById("ghRepo").value.trim().replace(/^https?:\/\/github\.com\//,"").replace(/\/$/,"");
+    gh.branch = document.getElementById("ghBranch").value.trim() || "data";
+    document.getElementById("ghRepo").value = gh.repo;
+    document.getElementById("ghBranch").value = gh.branch;
+    saveGhConfig();
+    etag = null;
+    setSync("busy", "Connecting…");
+    sync();
+  });
+  document.getElementById("syncDot").addEventListener("click", function(){
+    showToast(syncMsg, "neutral");
+    sync();
+  });
+
+  document.getElementById("modeInBtn").addEventListener("click", function(){
+    mode = "in";
+    document.getElementById("modeInBtn").classList.add("active");
+    document.getElementById("modeOutBtn").classList.remove("active");
+    updateCamHint();
+  });
+  document.getElementById("modeOutBtn").addEventListener("click", function(){
+    mode = "out";
+    document.getElementById("modeOutBtn").classList.add("active");
+    document.getElementById("modeInBtn").classList.remove("active");
+    updateCamHint();
+  });
+
+  document.getElementById("cameraToggleBtn").addEventListener("click", function(){
+    cameraOpen = !cameraOpen;
+    document.getElementById("cameraSection").style.display = cameraOpen ? "block" : "none";
+    this.classList.toggle("open", cameraOpen);
+    this.innerHTML = cameraOpen
+      ? '<span class="cam-icon">📷</span> Hide camera scan'
+      : '<span class="cam-icon">📷</span> Try camera scan instead';
+    if (!cameraOpen && scanning) stopScanner();
+  });
+
+  document.getElementById("toggleScanBtn").addEventListener("click", function(){
+    if (scanning) stopScanner(); else startScanner();
+  });
+  document.getElementById("torchBtn").addEventListener("click", toggleTorch);
+  document.getElementById("switchCamBtn").addEventListener("click", switchCamera);
+
+  function submitManual(){
+    var input = document.getElementById("manualInput");
+    handleCode(input.value);
+    input.value = "";
+    input.focus();
+  }
+  document.getElementById("manualBtn").addEventListener("click", submitManual);
+  document.getElementById("manualInput").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); submitManual(); }
+  });
+
+  document.getElementById("searchInput").addEventListener("input", renderList);
+
+  // ---------- Surveillance wire-up ----------
+  document.getElementById("survToggle").addEventListener("click", function(){
+    survOpen = !survOpen;
+    document.getElementById("survPanel").style.display = survOpen ? "block" : "none";
+  });
+
+  // Qty picker
+  document.getElementById("survQtyPick").querySelectorAll("button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      survQty = parseInt(btn.getAttribute("data-qty"), 10);
+      document.getElementById("survQtyPick").querySelectorAll("button").forEach(function(b){
+        b.classList.toggle("active", b === btn);
+      });
+    });
+  });
+
+  document.getElementById("survAddBtn").addEventListener("click", function(){
+    var nameEl = document.getElementById("survNameInput");
+    var name = nameEl.value.trim();
+    if (!name) return;
+    survList.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name: name, qty: survQty, returned: false, retT: Date.now() });
+    saveSurv(); renderSurv();
+    nameEl.value = "";
+    nameEl.focus();
+  });
+  document.getElementById("survNameInput").addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); document.getElementById("survAddBtn").click(); }
+  });
+
+  initSync();
+})();
+</script>
+</body>
+</html>
