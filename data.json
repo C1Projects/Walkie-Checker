@@ -193,13 +193,14 @@
   },
   {
    "code": "CG001913",
-   "name": "Alisha Ward",
+   "name": "Cordell C",
    "out": false,
    "in": false,
-   "outT": 1793823921002,
-   "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335
+   "outT": 1793824601099,
+   "inT": 1793824601099,
+   "del": false,
+   "delT": 1793824601099,
+   "nameT": 1793824601099
   },
   {
    "code": "CG001964",
