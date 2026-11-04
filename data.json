@@ -308,13 +308,14 @@
   },
   {
    "code": "CG001921",
-   "name": "Intern 2",
+   "name": "Jaclyn de la Rosa",
    "out": false,
    "in": false,
-   "outT": 1793823921002,
-   "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335
+   "outT": 1793826102194,
+   "inT": 1793826102194,
+   "del": false,
+   "delT": 1793826102194,
+   "nameT": 1793826102194
   },
   {
    "code": "CG000206",
