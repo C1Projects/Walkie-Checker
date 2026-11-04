@@ -4,310 +4,410 @@
    "code": "CG001996",
    "name": "Dave Noll",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001967",
    "name": "Luke Arnold",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001961",
    "name": "Beth Kochendorfer",
    "out": false,
-   "in": false
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000193",
    "name": "Sarah Smith",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000218",
    "name": "Adrienne Ashton",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001991",
    "name": "Jeffrey Lindgren",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001946",
    "name": "Jackii de la Rosa-Higgins",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000198",
    "name": "Robin O. Daughtry",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001982",
    "name": "Dominique Harrell",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG02031",
    "name": "Michel Monty",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000196",
    "name": "Kelvin \"Panda\" Tyler",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000200",
    "name": "Kyle Crowder",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000212",
    "name": "Nick Schwab",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001979",
    "name": "Monique \"Mo\" Henson",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001997",
    "name": "Nicole Freeman",
    "out": false,
-   "in": false
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001092",
    "name": "Brittany Apparicio",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000216",
    "name": "Darius Evans",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000215",
    "name": "Esther Lord",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000230",
    "name": "Christian Burnette",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001913",
    "name": "Alisha Ward",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001964",
    "name": "Jennifer Martin",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001084",
    "name": "Mike Thomas",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001940",
    "name": "Rebecca Noll",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001971",
    "name": "Jordan Wilmington",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000214",
    "name": "Christian Burnette",
    "out": false,
    "in": false,
-   "outT": 1793823762477,
-   "inT": 1793823762477,
+   "outT": 1793823912735,
+   "inT": 1793823912735,
    "nameT": 1793823762477
   },
   {
    "code": "CG02028",
    "name": "Dalton Cappello",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001949",
    "name": "Aaron Braxton",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001888",
    "name": "Maya Miller",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000201",
    "name": "Armani Ross",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000236",
    "name": "Intern 1",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001921",
    "name": "Intern 2",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000206",
    "name": "Intern 3",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001895",
    "name": "Sarah Katherine 'Kat' Mayer",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG02034",
    "name": "Despina Grammenos",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG02036",
    "name": "Kwame Waters",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001918",
    "name": "Kristen White",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001977",
    "name": "Craig Sanders",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001984",
    "name": "Janine Carthone",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001082",
    "name": "Joyce Gilliard",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG02012",
    "name": "Cecillio Quero",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG02022",
    "name": "Markel Dantzler",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG02004",
    "name": "Valeriia Luhovska",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001998",
    "name": "Renn Brown",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001159",
    "name": "Robert Winter (Snowman Solutions Inc)",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001078",
    "name": "Michael Goodwin",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG02006",
    "name": "Desrree Abanzukwe",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001155",
    "name": "Flex",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001943",
    "name": "THEO",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG001890",
    "name": "Parish",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG02026",
    "name": "Patrick Williams",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   },
   {
    "code": "CG000203",
    "name": "KYLE (7/2) / DENVER (7/8)",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823912735,
+   "inT": 1793823912735
   }
  ],
  "surv": [
