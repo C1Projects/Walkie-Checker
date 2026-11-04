@@ -146,9 +146,12 @@
   },
   {
    "code": "CG000214",
-   "name": "Carter Bunting",
+   "name": "Christian Burnette",
    "out": false,
-   "in": true
+   "in": false,
+   "outT": 1793823762477,
+   "inT": 1793823762477,
+   "nameT": 1793823762477
   },
   {
    "code": "CG02028",
