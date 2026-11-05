@@ -507,13 +507,14 @@
   },
   {
    "code": "CG02026",
-   "name": "Patrick Williams",
+   "name": "Rashida Ellis",
    "out": false,
    "in": false,
-   "outT": 1793823921002,
-   "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335
+   "outT": 1793899505336,
+   "inT": 1793899505336,
+   "del": false,
+   "delT": 1793899505336,
+   "nameT": 1793899505336
   },
   {
    "code": "CG000203",
