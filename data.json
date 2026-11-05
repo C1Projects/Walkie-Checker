@@ -794,13 +794,17 @@
    "name": "Sandra",
    "qty": 1,
    "returned": false,
-   "retT": 1793888991681
+   "retT": 1793888991681,
+   "del": true,
+   "delT": 1793888994932
   },
   {
    "id": "msceckwo",
    "name": "Denver",
    "qty": 1,
-   "returned": false
+   "returned": false,
+   "del": true,
+   "delT": 1793888994748
   },
   {
    "id": "mscecohz",
