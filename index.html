@@ -241,7 +241,7 @@
   .surv-add-btn{flex-shrink:0;width:auto;padding:0 16px;font-size:14px;}
 
   /* ── Sync ── */
-  .topright{display:flex;align-items:center;gap:8px;}
+  .topright{display:flex;align-items:center;gap:6px;}
   .sync-dot{width:11px;height:11px;border-radius:50%;background:#5b5f68;cursor:pointer;flex-shrink:0;}
   .sync-dot.ok{background:var(--green);}
   .sync-dot.busy{background:var(--amber);}
@@ -249,6 +249,14 @@
   .sync-dot.ro{background:#6ea8fe;}
   .sync-banner{display:none;margin-bottom:16px;padding:12px 14px;border-radius:var(--radius);border:1px solid rgba(242,169,59,.45);background:var(--bg-elev);font-size:13px;line-height:1.5;color:var(--ink);}
   .field-gap{height:10px;}
+  .hist-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);font-size:16px;line-height:1;cursor:pointer;padding:0;flex-shrink:0;}
+  .hist-btn:disabled{opacity:.28;cursor:default;}
+  .chip-edit{border-color:transparent;background:transparent;padding:7px 8px;color:var(--ink-dim);}
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:50;align-items:flex-end;justify-content:center;}
+  .modal.open{display:flex;}
+  .modal-card{width:100%;max-width:480px;background:var(--bg-elev);border:1px solid var(--line);border-radius:16px 16px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));}
+  .modal-card h3{margin:0 0 14px;font-size:16px;}
+  .modal-card .btn-row{display:flex;gap:10px;margin-top:16px;}
 
   /* ── Tab bar ── */
   .tabbar{
@@ -266,6 +274,8 @@
   <div class="topbar">
     <div class="brand"><span class="brand-mark">◎</span> WALKIE CHECK</div>
     <div class="topright">
+      <button class="hist-btn" id="undoBtn" title="Undo" disabled>&#8630;</button>
+      <button class="hist-btn" id="redoBtn" title="Redo" disabled>&#8631;</button>
       <span class="sync-dot" id="syncDot" title="Sync status"></span>
       <div class="summary-pill" id="summaryPill">— loading —</div>
     </div>
@@ -391,7 +401,7 @@
         <input type="text" id="ghRepo" placeholder="yourname/walkie-check" autocomplete="off" autocapitalize="off" autocorrect="off">
         <div class="field-gap"></div>
         <label class="field-label">Data branch</label>
-        <input type="text" id="ghBranch" placeholder="data" autocomplete="off" autocapitalize="off" autocorrect="off">
+        <input type="text" id="ghBranch" placeholder="main" autocomplete="off" autocapitalize="off" autocorrect="off">
         <div class="field-gap"></div>
         <button class="btn btn-primary" id="ghSaveBtn">Save &amp; sync now</button>
         <p class="settings-desc" id="ghStatusText">—</p>
@@ -404,6 +414,22 @@
       </div>
     </section>
   </main>
+
+  <!-- Edit walkie / person -->
+  <div class="modal" id="editModal">
+    <div class="modal-card">
+      <h3>Edit entry</h3>
+      <label class="field-label">Name</label>
+      <input type="text" id="editName" autocomplete="off" autocorrect="off">
+      <div class="field-gap"></div>
+      <label class="field-label">Walkie code</label>
+      <input type="text" id="editCode" autocapitalize="characters" autocomplete="off" autocorrect="off">
+      <div class="btn-row">
+        <button class="btn" id="editCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="editSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast -->
   <div class="toast" id="toast"></div>
@@ -457,7 +483,7 @@
       var seg = location.pathname.split("/")[1];
       if (seg) repo = location.hostname.split(".")[0] + "/" + seg;
     }
-    return { token: c.token || "", repo: repo, branch: c.branch || "data" };
+    return { token: c.token || "", repo: repo, branch: c.branch || "main" };
   }
   function saveGhConfig(){
     try{ localStorage.setItem(GH_KEY, JSON.stringify(gh)); }catch(e){}
@@ -466,7 +492,7 @@
   function cacheLoad(){
     try{
       var c = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
-      if (c){ roster = c.roster || []; survList = c.surv || []; }
+      if (c){ roster = c.roster || []; survList = c.surv || []; ensureIds(roster); }
     }catch(e){}
   }
   function cacheSave(){
@@ -475,7 +501,7 @@
 
   function liveRoster(){ return roster.filter(function(r){ return !r.del; }); }
 
-  var ROSTER_FIELDS = [["out","outT"],["in","inT"],["del","delT"],["name","nameT"]];
+  var ROSTER_FIELDS = [["out","outT"],["in","inT"],["del","delT"],["name","nameT"],["code","codeT"],["unlisted","unlistedT"]];
   var SURV_FIELDS   = [["returned","retT"],["del","delT"]];
 
   // Merge two lists of records keyed by `key`. Remote order is kept; new local items go last.
@@ -500,13 +526,28 @@
 
   function normalizeRemote(obj){
     // Accepts the old server format ({"walkie-roster": "<json string>"}) and the new one.
+    var out;
     if (obj && typeof obj["walkie-roster"] === "string"){
-      return {
+      out = {
         roster: JSON.parse(obj["walkie-roster"] || "[]"),
         surv: JSON.parse(obj["walkie-surv"] || "[]")
       };
+    } else {
+      out = { roster: (obj && obj.roster) || [], surv: (obj && obj.surv) || [] };
     }
-    return { roster: (obj && obj.roster) || [], surv: (obj && obj.surv) || [] };
+    ensureIds(out.roster);
+    return out;
+  }
+
+  // Every walkie entry has a permanent id so its code/name can change without creating duplicates.
+  // Older entries get a predictable id built from their code, so every phone derives the same one.
+  function ensureIds(list){
+    list.forEach(function(r){ if (!r.id) r.id = "id-" + r.code; });
+  }
+  function newId(code){
+    var base = "id-" + code;
+    if (!roster.some(function(r){ return r.id === base; })) return base;
+    return "id-" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
   }
 
   function b64encode(str){ return btoa(unescape(encodeURIComponent(str))); }
@@ -586,7 +627,7 @@
         etag = rem.etag;
         var v0 = localVer;
         var merged = {
-          roster: mergeList(rem.data.roster, roster, "code", ROSTER_FIELDS),
+          roster: mergeList(rem.data.roster, roster, "id", ROSTER_FIELDS),
           surv:   mergeList(rem.data.surv,   survList, "id", SURV_FIELDS)
         };
         if (gh.token && JSON.stringify(merged) !== JSON.stringify(rem.data)){
@@ -596,7 +637,7 @@
         }
         // Re-merge with the live local state in case the user tapped something during the request.
         var before = JSON.stringify([roster, survList]);
-        roster   = mergeList(merged.roster, roster,   "code", ROSTER_FIELDS);
+        roster   = mergeList(merged.roster, roster,   "id", ROSTER_FIELDS);
         survList = mergeList(merged.surv,   survList, "id",   SURV_FIELDS);
         if (JSON.stringify([roster, survList]) !== before){ renderAll(); renderSurv(); }
         cacheSave();
@@ -626,19 +667,106 @@
   function saveSurv(){ localChanged(); }
 
   function replaceRoster(parsed){
+    var h = histBegin();
     var now = Date.now(), keep = {};
     parsed.forEach(function(p){ keep[p.code] = true; });
     roster.forEach(function(r){ if (!keep[r.code] && !r.del){ r.del = true; r.delT = now; } });
     parsed.forEach(function(p){
-      var old = roster.find(function(r){ return r.code === p.code; });
+      var old = roster.find(function(r){ return r.code === p.code && !r.del; }) ||
+                roster.find(function(r){ return r.code === p.code; });
       if (old){
         old.del = false; old.delT = now; old.name = p.name; old.nameT = now;
         old.out = false; old.outT = now; old.in = false; old.inT = now;
       } else {
-        p.outT = now; p.inT = now; p.nameT = now; roster.push(p);
+        p.id = newId(p.code); p.outT = now; p.inT = now; p.nameT = now; roster.push(p);
       }
     });
+    histEnd(h, "Load list");
     saveRoster(); renderAll();
+  }
+
+  // ---------- Undo / redo (this phone's own actions only) ----------
+  var undoStack = [], redoStack = [];
+  function copyOf(o){ return JSON.parse(JSON.stringify(o)); }
+  function normV(v){ return v === undefined ? false : v; }
+  function listFor(name){ return name === "roster" ? roster : survList; }
+  function fieldsFor(name){ return name === "roster" ? ROSTER_FIELDS : SURV_FIELDS; }
+  function sameValues(a, b, fields){
+    return fields.every(function(f){ return normV(a[f[0]]) === normV(b[f[0]]); });
+  }
+  function snapshotState(){
+    var snap = { roster: {}, surv: {} };
+    roster.forEach(function(r){ snap.roster[r.id] = copyOf(r); });
+    survList.forEach(function(r){ snap.surv[r.id] = copyOf(r); });
+    return snap;
+  }
+  function histBegin(){ return snapshotState(); }
+  function histEnd(before, label){
+    var after = snapshotState(), diffs = [];
+    ["roster","surv"].forEach(function(list){
+      var fields = fieldsFor(list), ids = {};
+      Object.keys(before[list]).concat(Object.keys(after[list])).forEach(function(id){ ids[id] = true; });
+      Object.keys(ids).forEach(function(id){
+        var b = before[list][id] || null, a = after[list][id] || null;
+        if ((!b && a) || (b && !a) || (b && a && !sameValues(b, a, fields))){
+          diffs.push({ list: list, id: id, before: b, after: a });
+        }
+      });
+    });
+    if (!diffs.length) return false;
+    undoStack.push({ label: label, diffs: diffs });
+    if (undoStack.length > 50) undoStack.shift();
+    redoStack = [];
+    updateHistButtons();
+    return true;
+  }
+  function applyDiff(d, dir){
+    var from = dir === "undo" ? d.after : d.before;
+    var to   = dir === "undo" ? d.before : d.after;
+    var list = listFor(d.list), fields = fieldsFor(d.list);
+    var cur = list.find(function(r){ return r.id === d.id; });
+    var ok = from === null ? (!cur || cur.del) : (cur && sameValues(cur, from, fields));
+    if (!ok) return false;                       // someone else changed it since — leave it alone
+    var now = Date.now();
+    if (to === null){
+      if (cur && !cur.del){ cur.del = true; cur.delT = now; }
+      return true;
+    }
+    if (!cur){
+      cur = copyOf(to);
+      fields.forEach(function(f){ cur[f[1]] = now; });
+      list.push(cur);
+      return true;
+    }
+    fields.forEach(function(f){
+      if (normV(cur[f[0]]) !== normV(to[f[0]])){ cur[f[0]] = normV(to[f[0]]); cur[f[1]] = now; }
+    });
+    return true;
+  }
+  function stepHistory(dir){
+    var from = dir === "undo" ? undoStack : redoStack;
+    var to   = dir === "undo" ? redoStack : undoStack;
+    var act = from.pop();
+    if (!act) return;
+    var applied = 0, skipped = 0;
+    act.diffs.forEach(function(d){ if (applyDiff(d, dir)) applied++; else skipped++; });
+    if (applied){
+      to.push(act);
+      localChanged();
+      renderAll(); renderSurv();
+    }
+    updateHistButtons();
+    var verb = dir === "undo" ? "Undid" : "Redid";
+    if (!applied) showToast("Can't " + dir + " — someone else changed it since.", "error");
+    else showToast(verb + ": " + act.label + (skipped ? " (" + skipped + " skipped — changed by someone else)" : ""), "neutral");
+  }
+  function updateHistButtons(){
+    var u = document.getElementById("undoBtn"), r = document.getElementById("redoBtn");
+    if (!u || !r) return;
+    u.disabled = !undoStack.length;
+    r.disabled = !redoStack.length;
+    u.title = undoStack.length ? "Undo: " + undoStack[undoStack.length-1].label : "Nothing to undo";
+    r.title = redoStack.length ? "Redo: " + redoStack[redoStack.length-1].label : "Nothing to redo";
   }
 
   function initSync(){
@@ -691,7 +819,9 @@
         var id = btn.getAttribute("data-scheck");
         var item = survList.find(function(r){ return r.id===id; });
         if (!item) return;
+        var h = histBegin();
         item.returned = !item.returned; item.retT = Date.now();
+        histEnd(h, "Headset " + (item.returned ? "returned" : "not returned") + " — " + item.name);
         saveSurv(); renderSurv();
       });
     });
@@ -700,7 +830,9 @@
         var id = btn.getAttribute("data-sdel");
         var item = survList.find(function(r){ return r.id===id; });
         if (!item) return;
+        var h = histBegin();
         item.del = true; item.delT = Date.now();
+        histEnd(h, "Remove headset — " + item.name);
         saveSurv(); renderSurv();
       });
     });
@@ -825,21 +957,28 @@
     listEl.innerHTML = html;
     listEl.querySelectorAll("[data-toggle]").forEach(function(btn){
       btn.addEventListener("click", function(){
-        var code = btn.getAttribute("data-code");
+        var id = btn.getAttribute("data-id");
         var field = btn.getAttribute("data-toggle");
-        var item = roster.find(function(r){return r.code === code;});
+        var item = roster.find(function(r){return r.id === id;});
         if (!item) return;
+        var h = histBegin();
         item[field] = !item[field];
         item[field+"T"] = Date.now();
+        histEnd(h, (item[field] ? "Mark " : "Unmark ") + field.toUpperCase() + " — " + item.name);
         saveRoster(); renderAll();
       });
     });
+    listEl.querySelectorAll("[data-edit]").forEach(function(btn){
+      btn.addEventListener("click", function(){ openEdit(btn.getAttribute("data-edit")); });
+    });
     listEl.querySelectorAll("[data-del]").forEach(function(btn){
       btn.addEventListener("click", function(){
-        var code = btn.getAttribute("data-del");
-        var gone = roster.find(function(r){return r.code === code;});
+        var id = btn.getAttribute("data-del");
+        var gone = roster.find(function(r){return r.id === id;});
         if (!gone) return;
+        var h = histBegin();
         gone.del = true; gone.delT = Date.now();
+        histEnd(h, "Remove " + gone.name);
         saveRoster(); renderAll();
       });
     });
@@ -851,13 +990,48 @@
       items.map(function(r){
         var flag = r.unlisted ? ' <span style="color:var(--red);font-weight:700;">⚠ UNLISTED</span>' : '';
         return '<div class="row">'+
-          '<div class="row-main"><div class="row-name">'+escapeHtml(r.name)+flag+'</div><div class="row-code">'+r.code+'</div></div>'+
+          '<div class="row-main"><div class="row-name">'+escapeHtml(r.name)+flag+'</div><div class="row-code">'+escapeHtml(r.code)+'</div></div>'+
           '<div class="row-actions">'+
-            '<button class="chip chip-out '+(r.out?"on":"")+'" data-toggle="out" data-code="'+r.code+'">OUT</button>'+
-            '<button class="chip chip-in  '+(r.in?"on":"")+ '" data-toggle="in"  data-code="'+r.code+'">IN</button>'+
-            '<button class="chip chip-del" data-del="'+r.code+'">×</button>'+
+            '<button class="chip chip-out '+(r.out?"on":"")+'" data-toggle="out" data-id="'+r.id+'">OUT</button>'+
+            '<button class="chip chip-in  '+(r.in?"on":"")+ '" data-toggle="in"  data-id="'+r.id+'">IN</button>'+
+            '<button class="chip chip-edit" data-edit="'+r.id+'" title="Edit name / code">&#9998;</button>'+
+            '<button class="chip chip-del" data-del="'+r.id+'">×</button>'+
           '</div></div>';
       }).join("");
+  }
+
+  // ---------- Edit name / code ----------
+  var editingId = null;
+  function openEdit(id){
+    var item = roster.find(function(r){ return r.id === id; });
+    if (!item) return;
+    editingId = id;
+    document.getElementById("editName").value = item.unlisted && item.name === "NOT ON LIST" ? "" : item.name;
+    document.getElementById("editCode").value = item.code;
+    document.getElementById("editModal").classList.add("open");
+    setTimeout(function(){ document.getElementById("editName").focus(); }, 60);
+  }
+  function closeEdit(){
+    editingId = null;
+    document.getElementById("editModal").classList.remove("open");
+  }
+  function saveEdit(){
+    var item = roster.find(function(r){ return r.id === editingId; });
+    if (!item){ closeEdit(); return; }
+    var name = document.getElementById("editName").value.trim();
+    var code = document.getElementById("editCode").value.replace(/\s+/g, "").toUpperCase();
+    if (!name || !code){ showToast("Name and code can't be empty", "error"); return; }
+    var clash = liveRoster().find(function(r){ return r.code === code && r.id !== item.id; });
+    if (clash){ showToast("Code " + code + " is already used by " + clash.name, "error"); return; }
+    if (name === item.name && code === item.code && !item.unlisted){ closeEdit(); return; }
+    var h = histBegin(), now = Date.now();
+    if (name !== item.name){ item.name = name; item.nameT = now; }
+    if (code !== item.code){ item.code = code; item.codeT = now; }
+    if (item.unlisted){ item.unlisted = false; item.unlistedT = now; }
+    histEnd(h, "Edit " + name);
+    saveRoster(); renderAll();
+    closeEdit();
+    showToast("Saved — " + name, "success-in");
   }
 
   function escapeHtml(s){
@@ -883,13 +1057,15 @@
     if (lastScan.code === code && now - lastScan.time < 1200) return;
     lastScan = { code: code, time: now };
 
-    var item = roster.find(function(r){ return r.code === code; });
+    var item = roster.find(function(r){ return r.code === code && !r.del; }) ||
+               roster.find(function(r){ return r.code === code; });
     document.getElementById("feedback").style.display = "block";
+    var h = histBegin();
 
     if (item && item.del){ item.del = false; item.delT = now; }   // scanning a removed walkie brings it back
 
     if (!item){
-      item = { code: code, name: "NOT ON LIST", out: false, in: false, outT: now, inT: now, unlisted: true };
+      item = { id: newId(code), code: code, name: "NOT ON LIST", out: false, in: false, outT: now, inT: now, unlisted: true, unlistedT: now };
       roster.push(item);
       flashFrame("error");
       vibrate([90,60,90]);
@@ -900,6 +1076,7 @@
         setFeedback("already","ALREADY CHECKED IN", item.name, item.code);
         showToast("Already checked in — " + item.name, "neutral");
         vibrate(70);
+        finishScan(h, "Restore " + item.name);
         return;
       }
       item.in = true; item.inT = now;
@@ -916,6 +1093,7 @@
         setFeedback("already","ALREADY CHECKED OUT", item.name, item.code);
         showToast("Already checked out — " + item.name, "neutral");
         vibrate(70);
+        finishScan(h, "Restore " + item.name);
         return;
       }
       item.out = true; item.outT = now;
@@ -929,7 +1107,10 @@
       flashFrame("success");
     }
     vibrate(140);
-    saveRoster(); renderSummaryPill(); renderSetup(); renderList();
+    finishScan(h, "Scan " + (mode === "in" ? "IN" : "OUT") + " — " + item.name);
+  }
+  function finishScan(h, label){
+    if (histEnd(h, label)){ saveRoster(); renderSummaryPill(); renderSetup(); renderList(); }
   }
 
   function setFeedback(cls, status, name, code){
@@ -1041,6 +1222,7 @@
     var parsed = parseRosterText(document.getElementById("addMoreInput").value);
     var msg = document.getElementById("addMoreMsg");
     if (!parsed.length){ msg.style.display="block"; msg.textContent="Nothing recognized — check format and try again."; return; }
+    var h = histBegin();
     var existing = {};
     liveRoster().forEach(function(r){ existing[r.code]=true; });
     var added=0, skipped=0, nowT=Date.now();
@@ -1051,10 +1233,11 @@
         old.del=false; old.delT=nowT; old.name=item.name; old.nameT=nowT;
         old.out=false; old.outT=nowT; old.in=false; old.inT=nowT;
       } else {
-        item.outT=nowT; item.inT=nowT; item.nameT=nowT; roster.push(item);
+        item.id=newId(item.code); item.outT=nowT; item.inT=nowT; item.nameT=nowT; roster.push(item);
       }
       existing[item.code]=true; added++;
     });
+    histEnd(h, "Add " + added + " to list");
     saveRoster(); renderAll();
     document.getElementById("addMoreInput").value = "";
     msg.style.display="block";
@@ -1062,9 +1245,12 @@
   });
 
   document.getElementById("newSessionBtn").addEventListener("click", function(){
+    var h = histBegin();
     var nowT = Date.now();
     liveRoster().forEach(function(r){ r.out=false; r.outT=nowT; r.in=false; r.inT=nowT; });
+    histEnd(h, "Start new session");
     saveRoster(); renderAll();
+    showToast("New session started — tap ↶ to undo", "neutral");
   });
 
   document.getElementById("clearRosterBtn").addEventListener("click", function(){
@@ -1084,9 +1270,11 @@
     clearArmed = false;
     btn.textContent = "Replace list";
     btn.classList.remove("armed");
+    var h = histBegin();
     var nowT = Date.now();
     roster.forEach(function(r){ if (!r.del){ r.del=true; r.delT=nowT; } });
     document.getElementById("rosterInput").value = "";
+    histEnd(h, "Replace list");
     saveRoster(); renderAll();
   });
 
@@ -1106,7 +1294,7 @@
   document.getElementById("ghSaveBtn").addEventListener("click", function(){
     gh.token  = document.getElementById("ghToken").value.trim();
     gh.repo   = document.getElementById("ghRepo").value.trim().replace(/^https?:\/\/github\.com\//,"").replace(/\/$/,"");
-    gh.branch = document.getElementById("ghBranch").value.trim() || "data";
+    gh.branch = document.getElementById("ghBranch").value.trim() || "main";
     document.getElementById("ghRepo").value = gh.repo;
     document.getElementById("ghBranch").value = gh.branch;
     saveGhConfig();
@@ -1181,13 +1369,27 @@
     var nameEl = document.getElementById("survNameInput");
     var name = nameEl.value.trim();
     if (!name) return;
+    var h = histBegin();
     survList.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name: name, qty: survQty, returned: false, retT: Date.now() });
+    histEnd(h, "Add headset — " + name);
     saveSurv(); renderSurv();
     nameEl.value = "";
     nameEl.focus();
   });
   document.getElementById("survNameInput").addEventListener("keydown", function(e){
     if (e.key === "Enter"){ e.preventDefault(); document.getElementById("survAddBtn").click(); }
+  });
+
+  document.getElementById("undoBtn").addEventListener("click", function(){ stepHistory("undo"); });
+  document.getElementById("redoBtn").addEventListener("click", function(){ stepHistory("redo"); });
+  document.getElementById("editSaveBtn").addEventListener("click", saveEdit);
+  document.getElementById("editCancelBtn").addEventListener("click", closeEdit);
+  document.getElementById("editModal").addEventListener("click", function(e){ if (e.target === this) closeEdit(); });
+  ["editName","editCode"].forEach(function(id){
+    document.getElementById(id).addEventListener("keydown", function(e){
+      if (e.key === "Enter"){ e.preventDefault(); saveEdit(); }
+      if (e.key === "Escape"){ closeEdit(); }
+    });
   });
 
   initSync();
