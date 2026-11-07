@@ -405,6 +405,7 @@
         <div class="field-gap"></div>
         <button class="btn btn-primary" id="ghSaveBtn">Save &amp; sync now</button>
         <p class="settings-desc" id="ghStatusText">—</p>
+        <p class="settings-desc">App version: <span id="appVer"></span></p>
       </div>
 
       <h2 class="section-title">Danger zone</h2>
@@ -469,6 +470,8 @@
   // edit at once, the newer change to each field wins, so nobody overwrites anybody.
   var GH_KEY = "walkie-gh", CACHE_KEY = "walkie-cache";
   var DATA_PATH = "data.json";
+  var APP_VERSION = "v3 · duplicate fix · 2026-11-07";
+  var staleAt = 0, remoteHasV = false;
   var POLL_MS = 5000;
   var gh = loadGhConfig();
   var localVer = 0, syncedVer = 0;
@@ -492,7 +495,7 @@
   function cacheLoad(){
     try{
       var c = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
-      if (c){ roster = c.roster || []; survList = c.surv || []; ensureIds(roster); }
+      if (c){ roster = c.roster || []; survList = c.surv || []; ensureIds(roster); roster = foldDuplicates(roster, "id", ROSTER_FIELDS); survList = foldDuplicates(survList, "id", SURV_FIELDS); }
     }catch(e){}
   }
   function cacheSave(){
@@ -505,8 +508,27 @@
   var SURV_FIELDS   = [["returned","retT"],["del","delT"]];
 
   // Merge two lists of records keyed by `key`. Remote order is kept; new local items go last.
+  // Records that share an id ARE the same record. Collapse them into one (newest value per field).
+  // A record stays live if any copy of it is live, so healing never deletes the real entry.
+  function foldDuplicates(list, key, fields){
+    var out = [], idx = {};
+    list.forEach(function(item){
+      var k = item[key];
+      if (idx[k] === undefined){ idx[k] = out.length; out.push(item); return; }
+      var base = out[idx[k]];
+      fields.forEach(function(f){
+        if (f[0] === "del") return;
+        if ((item[f[1]] || 0) > (base[f[1]] || 0)){ base[f[0]] = item[f[0]]; base[f[1]] = item[f[1]]; }
+      });
+      if (!item.del && base.del){ base.del = false; base.delT = Math.max(base.delT || 0, item.delT || 0); }
+    });
+    return out;
+  }
+
   function mergeList(remoteList, localList, key, fields){
-    var out = remoteList.map(function(r){ return JSON.parse(JSON.stringify(r)); });
+    var clone = function(r){ return JSON.parse(JSON.stringify(r)); };
+    var out = foldDuplicates(remoteList.map(clone), key, fields);
+    localList = foldDuplicates(localList.map(clone), key, fields);
     var idx = {};
     out.forEach(function(r, i){ idx[r[key]] = i; });
     localList.forEach(function(l){
@@ -535,14 +557,34 @@
     } else {
       out = { roster: (obj && obj.roster) || [], surv: (obj && obj.surv) || [] };
     }
+    remoteHasV = !!(obj && obj.v >= 3);
+    var idless = out.roster.filter(function(r){ return !r.id; }).length;
+    if (remoteHasV && idless > 0){
+      // An out-of-date device (no permanent ids) wrote to the file.
+      var wasQuiet = (Date.now() - staleAt) > 120000;
+      staleAt = Date.now();
+      if (wasQuiet) showToast("⚠ A device is running an old version — refresh it", "error");
+    }
     ensureIds(out.roster);
+    out.roster = foldDuplicates(out.roster, "id", ROSTER_FIELDS);
+    out.surv   = foldDuplicates(out.surv,   "id", SURV_FIELDS);
     return out;
   }
 
   // Every walkie entry has a permanent id so its code/name can change without creating duplicates.
   // Older entries get a predictable id built from their code, so every phone derives the same one.
+  // An id-less entry whose code-id already belongs to an entry that has since been re-coded is a stale
+  // echo from an out-of-date device, so it is dropped instead of being turned into a duplicate.
   function ensureIds(list){
-    list.forEach(function(r){ if (!r.id) r.id = "id-" + r.code; });
+    var taken = {};
+    list.forEach(function(r){ if (r.id) taken[r.id] = r; });
+    for (var i = list.length - 1; i >= 0; i--){
+      var r = list[i];
+      if (r.id) continue;
+      var base = "id-" + r.code, owner = taken[base];
+      if (owner && owner.code !== r.code){ list.splice(i, 1); continue; }
+      r.id = base; taken[base] = r;
+    }
   }
   function newId(code){
     var base = "id-" + code;
@@ -568,7 +610,7 @@
     var extra = (useEtag && etag) ? { "If-None-Match": etag } : {};
     var r = await fetch(ghUrl(), { headers: ghHeaders(extra), cache: "no-store" });
     if (r.status === 304) return { notModified: true };
-    if (r.status === 404) return { data: { roster: [], surv: [] }, sha: null, etag: null };
+    if (r.status === 404){ remoteHasV = false; return { data: { roster: [], surv: [] }, sha: null, etag: null }; }
     if (r.status === 401) throw new Error("Token rejected — check it's copied correctly and hasn't expired.");
     if (r.status === 403) throw new Error("GitHub refused the request (token permissions or rate limit).");
     if (!r.ok) throw new Error("GitHub error " + r.status);
@@ -581,7 +623,7 @@
   async function ghPut(data, sha){
     var body = {
       message: "walkie sync " + new Date().toISOString(),
-      content: b64encode(JSON.stringify(data, null, 1)),
+      content: b64encode(JSON.stringify({ v: 3, roster: data.roster, surv: data.surv }, null, 1)),
       branch: gh.branch
     };
     if (sha) body.sha = sha;
@@ -599,6 +641,12 @@
     if (r.status === 403) throw new Error("Token can't write to this repo (needs Contents: Read and write).");
     if (r.status === 404) throw new Error("Repo or branch not found — check the repo name and that the branch \"" + gh.branch + "\" exists.");
     throw new Error("Couldn't save to GitHub (" + r.status + (msg ? ": " + msg : "") + ")");
+  }
+
+  function okMsg(){
+    var m = gh.token ? "Synced " + new Date().toLocaleTimeString() : "View only — add a token to save changes.";
+    if (Date.now() - staleAt < 120000) m += " ⚠ A device on an old version is still syncing — refresh it.";
+    return m;
   }
 
   function setSync(state, msg){
@@ -621,7 +669,7 @@
         var clean = (localVer === syncedVer);
         var rem = await ghGet(clean);
         if (rem.notModified){
-          setSync(gh.token ? "ok" : "ro", gh.token ? "Synced " + new Date().toLocaleTimeString() : "View only — add a token to save changes.");
+          setSync(gh.token ? "ok" : "ro", okMsg());
           done = true; break;
         }
         etag = rem.etag;
@@ -630,7 +678,7 @@
           roster: mergeList(rem.data.roster, roster, "id", ROSTER_FIELDS),
           surv:   mergeList(rem.data.surv,   survList, "id", SURV_FIELDS)
         };
-        if (gh.token && JSON.stringify(merged) !== JSON.stringify(rem.data)){
+        if (gh.token && (JSON.stringify(merged) !== JSON.stringify(rem.data) || !remoteHasV)){
           var res = await ghPut(merged, rem.sha);
           if (res.conflict){ etag = null; continue; }   // someone saved first: re-read and merge again
           etag = null;
@@ -643,7 +691,7 @@
         cacheSave();
         if (gh.token) syncedVer = v0;
         if (localVer !== v0) syncAgain = true;
-        setSync(gh.token ? "ok" : "ro", gh.token ? "Synced " + new Date().toLocaleTimeString() : "View only — add a token to save changes.");
+        setSync(gh.token ? "ok" : "ro", okMsg());
         done = true;
       }
       if (!done) setSync("err", "GitHub was busy — will retry in a moment.");
@@ -772,6 +820,7 @@
   function initSync(){
     cacheLoad();
     renderAll(); renderSurv();
+    document.getElementById("appVer").textContent = APP_VERSION;
     document.getElementById("ghToken").value  = gh.token;
     document.getElementById("ghRepo").value   = gh.repo;
     document.getElementById("ghBranch").value = gh.branch;
@@ -988,14 +1037,15 @@
     if (!items.length) return "";
     return '<h2 class="section-title">'+title+' ('+items.length+')</h2>'+
       items.map(function(r){
+        var rid = escapeHtml(r.id);
         var flag = r.unlisted ? ' <span style="color:var(--red);font-weight:700;">⚠ UNLISTED</span>' : '';
         return '<div class="row">'+
           '<div class="row-main"><div class="row-name">'+escapeHtml(r.name)+flag+'</div><div class="row-code">'+escapeHtml(r.code)+'</div></div>'+
           '<div class="row-actions">'+
-            '<button class="chip chip-out '+(r.out?"on":"")+'" data-toggle="out" data-id="'+r.id+'">OUT</button>'+
-            '<button class="chip chip-in  '+(r.in?"on":"")+ '" data-toggle="in"  data-id="'+r.id+'">IN</button>'+
-            '<button class="chip chip-edit" data-edit="'+r.id+'" title="Edit name / code">&#9998;</button>'+
-            '<button class="chip chip-del" data-del="'+r.id+'">×</button>'+
+            '<button class="chip chip-out '+(r.out?"on":"")+'" data-toggle="out" data-id="'+rid+'">OUT</button>'+
+            '<button class="chip chip-in  '+(r.in?"on":"")+ '" data-toggle="in"  data-id="'+rid+'">IN</button>'+
+            '<button class="chip chip-edit" data-edit="'+rid+'" title="Edit name / code">&#9998;</button>'+
+            '<button class="chip chip-del" data-del="'+rid+'">×</button>'+
           '</div></div>';
       }).join("");
   }
