@@ -1,4 +1,5 @@
 {
+ "v": 3,
  "roster": [
   {
    "code": "CG001996",
@@ -890,74 +891,6 @@
    "nameT": 1794089331908,
    "id": "id-CG 0000000",
    "codeT": 1794089370497
-  },
-  {
-   "code": "CG00000077",
-   "name": "Test Person 2.0",
-   "out": false,
-   "in": false,
-   "outT": 1794089331908,
-   "inT": 1794089331908,
-   "nameT": 1794089331908,
-   "id": "id-CG 0000000",
-   "codeT": 1794089370497
-  },
-  {
-   "code": "CG00000077",
-   "name": "Test Person 2.0",
-   "out": false,
-   "in": false,
-   "outT": 1794089331908,
-   "inT": 1794089331908,
-   "nameT": 1794089331908,
-   "id": "id-CG 0000000",
-   "codeT": 1794089370497
-  },
-  {
-   "code": "CG00000077",
-   "name": "Test Person 2.0",
-   "out": false,
-   "in": false,
-   "outT": 1794089331908,
-   "inT": 1794089331908,
-   "nameT": 1794089331908,
-   "id": "id-CG 0000000",
-   "codeT": 1794089370497
-  },
-  {
-   "code": "CG00000077",
-   "name": "Test Person 2.0",
-   "out": false,
-   "in": false,
-   "outT": 1794089331908,
-   "inT": 1794089331908,
-   "nameT": 1794089331908,
-   "id": "id-CG 0000000",
-   "codeT": 1794089370497
-  },
-  {
-   "code": "CG00000077",
-   "name": "Test Person 2.0",
-   "out": false,
-   "in": false,
-   "outT": 1794089331908,
-   "inT": 1794089331908,
-   "nameT": 1794089331908,
-   "id": "id-CG 0000000",
-   "codeT": 1794089370497
-  },
-  {
-   "code": "CG00000077",
-   "name": "Test Person 2.0",
-   "out": false,
-   "in": false,
-   "outT": 1794089331908,
-   "inT": 1794089331908,
-   "nameT": 1794089331908,
-   "id": "id-CG 0000000",
-   "codeT": 1794089370497,
-   "del": true,
-   "delT": 1794089446841
   }
  ],
  "surv": [
