@@ -1028,14 +1028,15 @@
    "nameT": 1794247245738
   },
   {
-   "code": "INTERN 2 CG001895",
-   "name": "(no name)",
+   "code": "CG001895",
+   "name": "INTERN 2",
    "out": false,
    "in": false,
    "id": "id-INTERN 2 CG001895",
    "outT": 1794247252820,
    "inT": 1794247252820,
-   "nameT": 1794247252820
+   "nameT": 1794247266419,
+   "codeT": 1794247266419
   }
  ],
  "surv": [
