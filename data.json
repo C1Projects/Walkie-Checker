@@ -59,14 +59,15 @@
   },
   {
    "code": "CG001991",
-   "name": "Jeffrey Lindgren",
+   "name": "Tez Valenzula",
    "out": false,
    "in": false,
-   "outT": 1793823921002,
-   "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335,
-   "id": "id-CG001991"
+   "outT": 1794243717891,
+   "inT": 1794243717891,
+   "del": false,
+   "delT": 1794243717891,
+   "id": "id-CG001991",
+   "nameT": 1794243717891
   },
   {
    "code": "CG001946",
