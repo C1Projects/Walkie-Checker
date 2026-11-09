@@ -448,14 +448,15 @@
   },
   {
    "code": "CG02012",
-   "name": "Cecillio Quero",
+   "name": "Glenn Taylor",
    "out": false,
    "in": false,
-   "outT": 1793823921002,
-   "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335,
-   "id": "id-CG02012"
+   "outT": 1794243418922,
+   "inT": 1794243418922,
+   "del": false,
+   "delT": 1794243418922,
+   "id": "id-CG02012",
+   "nameT": 1794243418922
   },
   {
    "code": "CG02022",
