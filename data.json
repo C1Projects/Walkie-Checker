@@ -70,14 +70,15 @@
   },
   {
    "code": "CG001946",
-   "name": "Jackii de la Rosa-Higgins",
+   "name": "Desseree Abanzukwe",
    "out": false,
    "in": false,
-   "outT": 1793823921002,
-   "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335,
-   "id": "id-CG001946"
+   "outT": 1794243385487,
+   "inT": 1794243385487,
+   "del": false,
+   "delT": 1794243385487,
+   "id": "id-CG001946",
+   "nameT": 1794243385487
   },
   {
    "code": "CG000198",
