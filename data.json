@@ -909,6 +909,16 @@
    "codeT": 1794090725879,
    "del": true,
    "delT": 1794090738049
+  },
+  {
+   "code": "CG 001945",
+   "name": "\"Hair Stylist\"",
+   "out": false,
+   "in": false,
+   "id": "id-CG 001945",
+   "outT": 1794243269871,
+   "inT": 1794243269871,
+   "nameT": 1794243269871
   }
  ],
  "surv": [
