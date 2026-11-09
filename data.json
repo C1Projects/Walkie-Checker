@@ -232,14 +232,15 @@
   },
   {
    "code": "CG001964",
-   "name": "Jennifer Martin",
+   "name": "Renn Brown",
    "out": false,
    "in": false,
-   "outT": 1793823921002,
-   "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335,
-   "id": "id-CG001964"
+   "outT": 1794243677773,
+   "inT": 1794243677773,
+   "del": false,
+   "delT": 1794243677773,
+   "id": "id-CG001964",
+   "nameT": 1794243677773
   },
   {
    "code": "CG001084",
