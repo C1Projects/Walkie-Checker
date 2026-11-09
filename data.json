@@ -287,14 +287,15 @@
   },
   {
    "code": "CG02028",
-   "name": "Dalton Cappello",
+   "name": "Janine Carthone",
    "out": false,
    "in": false,
-   "outT": 1793823921002,
-   "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335,
-   "id": "id-CG02028"
+   "outT": 1794243225886,
+   "inT": 1794243225886,
+   "del": false,
+   "delT": 1794243225886,
+   "id": "id-CG02028",
+   "nameT": 1794243225886
   },
   {
    "code": "CG001949",
