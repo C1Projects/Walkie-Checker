@@ -384,9 +384,9 @@
   {
    "code": "CG02034",
    "name": "Nyah B",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793832820995,
+   "outT": 1794312396951,
    "inT": 1793832820995,
    "del": false,
    "delT": 1793832820995,
