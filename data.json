@@ -350,9 +350,9 @@
   {
    "code": "CG001921",
    "name": "Jaclyn de la Rosa",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793826102194,
+   "outT": 1794318214025,
    "inT": 1793826102194,
    "del": false,
    "delT": 1793826102194,
