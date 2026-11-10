@@ -780,9 +780,9 @@
   {
    "code": "CG000219",
    "name": "Katie H.M",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793832791892,
+   "outT": 1794312390235,
    "inT": 1793832791892,
    "nameT": 1793832791892,
    "id": "id-CG000219"
