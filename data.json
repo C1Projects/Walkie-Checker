@@ -852,9 +852,9 @@
   {
    "code": "CG001086",
    "name": "Thomas Bennett",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793898621116,
+   "outT": 1794318231625,
    "inT": 1793898621116,
    "nameT": 1793898621116,
    "id": "id-CG001086"
