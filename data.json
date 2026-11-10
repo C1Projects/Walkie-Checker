@@ -96,9 +96,9 @@
   {
    "code": "CG001982",
    "name": "Chakra V",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794339998242,
+   "outT": 1794340002759,
    "inT": 1793824776261,
    "del": false,
    "delT": 1793824776261,
