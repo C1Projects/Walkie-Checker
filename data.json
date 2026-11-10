@@ -802,9 +802,9 @@
   {
    "code": "CG001953",
    "name": "Derek Gibbs",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793897471411,
+   "outT": 1794339742155,
    "inT": 1793897471411,
    "nameT": 1793897471411,
    "id": "id-CG001953"
@@ -822,9 +822,9 @@
   {
    "code": "CG001081",
    "name": "Cecily Allen",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793897881831,
+   "outT": 1794339742022,
    "inT": 1793897881831,
    "nameT": 1793897881831,
    "id": "id-CG001081"
