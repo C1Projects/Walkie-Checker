@@ -918,14 +918,15 @@
    "delT": 1794090738049
   },
   {
-   "code": "CG 001945",
-   "name": "\"Hair Stylist\"",
+   "code": "CG001945",
+   "name": "Brenda Dunbar",
    "out": false,
    "in": false,
    "id": "id-CG 001945",
    "outT": 1794243269871,
    "inT": 1794243269871,
-   "nameT": 1794243269871
+   "nameT": 1794340540991,
+   "codeT": 1794340540991
   },
   {
    "code": "CG001962",
