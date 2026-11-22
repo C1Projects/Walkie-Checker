@@ -852,9 +852,9 @@
   {
    "code": "CG001086",
    "name": "Thomas Bennett",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794318231625,
+   "outT": 1795362878072,
    "inT": 1793898621116,
    "nameT": 1793898621116,
    "id": "id-CG001086"
@@ -971,10 +971,10 @@
   {
    "code": "CG001893",
    "name": "Francine Simmons",
-   "out": true,
+   "out": false,
    "in": false,
    "id": "id-CG001893",
-   "outT": 1794318244175,
+   "outT": 1795362878609,
    "inT": 1794243404189,
    "nameT": 1794243404189
   },
