@@ -384,9 +384,9 @@
   {
    "code": "CG02034",
    "name": "Nyah B",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794312396951,
+   "outT": 1795362888842,
    "inT": 1793832820995,
    "del": false,
    "delT": 1793832820995,
@@ -520,9 +520,9 @@
   {
    "code": "CG02006",
    "name": "Sunny D",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794339312168,
+   "outT": 1795362888218,
    "inT": 1793826042981,
    "del": false,
    "delT": 1793826042981,
