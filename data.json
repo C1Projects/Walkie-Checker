@@ -842,9 +842,9 @@
   {
    "code": "CG000208",
    "name": "Khiyah Burke",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794312382367,
+   "outT": 1795362879524,
    "inT": 1794312383733,
    "nameT": 1793898506785,
    "id": "id-CG000208"
