@@ -130,9 +130,9 @@
   {
    "code": "CG000200",
    "name": "Jeffery L",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794318219925,
+   "outT": 1795362892538,
    "inT": 1793824381492,
    "del": false,
    "delT": 1793824381492,
