@@ -760,9 +760,9 @@
   {
    "code": "CG001083",
    "name": "Alisha W",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794312391534,
+   "outT": 1795362884811,
    "inT": 1793826671676,
    "nameT": 1793826671676,
    "id": "id-CG001083"
