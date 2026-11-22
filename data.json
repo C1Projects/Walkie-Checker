@@ -780,9 +780,9 @@
   {
    "code": "CG000219",
    "name": "Katie H.M",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794312390235,
+   "outT": 1795362882700,
    "inT": 1793832791892,
    "nameT": 1793832791892,
    "id": "id-CG000219"
@@ -822,9 +822,9 @@
   {
    "code": "CG001081",
    "name": "Cecily Allen",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794340005258,
+   "outT": 1795362881819,
    "inT": 1793897881831,
    "nameT": 1793897881831,
    "id": "id-CG001081"
