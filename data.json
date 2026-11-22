@@ -770,9 +770,9 @@
   {
    "code": "CG00195",
    "name": "Carter B",
-   "out": true,
+   "out": false,
    "in": false,
-   "outT": 1794312391401,
+   "outT": 1795362885278,
    "inT": 1793832759306,
    "nameT": 1793832759306,
    "id": "id-CG00195"
