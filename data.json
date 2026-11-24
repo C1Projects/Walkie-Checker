@@ -520,9 +520,9 @@
   {
    "code": "CG02006",
    "name": "Sunny D",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1795362888218,
+   "outT": 1795536978514,
    "inT": 1793826042981,
    "del": false,
    "delT": 1793826042981,
