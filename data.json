@@ -1042,10 +1042,10 @@
   {
    "code": "CG001969",
    "name": "INTERN 3",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-CG001969",
-   "outT": 1794247292052,
+   "outT": 1795537421464,
    "inT": 1794247292052,
    "nameT": 1794247292052
   },
