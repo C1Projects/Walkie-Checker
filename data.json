@@ -872,9 +872,9 @@
   {
    "code": "CG001090",
    "name": "Latanya Hodges",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793899218259,
+   "outT": 1795535280303,
    "inT": 1793899218259,
    "nameT": 1793899218259,
    "id": "id-CG001090"
