@@ -565,9 +565,9 @@
   {
    "code": "CG02026",
    "name": "Rashida Ellis",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793899505336,
+   "outT": 1795537325447,
    "inT": 1793899505336,
    "del": false,
    "delT": 1793899505336,
