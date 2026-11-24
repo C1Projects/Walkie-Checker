@@ -618,9 +618,9 @@
   {
    "code": "CG000222",
    "name": "Nick Schwab",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793825041180,
+   "outT": 1795535703882,
    "inT": 1793825041180,
    "nameT": 1793825041180,
    "id": "id-CG000222"
