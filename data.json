@@ -650,9 +650,9 @@
   {
    "code": "CG001981",
    "name": "Esther Lord",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793825233172,
+   "outT": 1795551743556,
    "inT": 1793825233172,
    "nameT": 1793825233172,
    "id": "id-CG001981"
