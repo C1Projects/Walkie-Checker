@@ -1052,13 +1052,14 @@
   {
    "id": "id-CG001077",
    "code": "CG001077",
-   "name": "NOT ON LIST",
+   "name": "NOT ON LIST (\"Faulty\")",
    "out": true,
    "in": false,
    "outT": 1795535627619,
    "inT": 1795535627619,
-   "unlisted": true,
-   "unlistedT": 1795535627619
+   "unlisted": false,
+   "unlistedT": 1795536879524,
+   "nameT": 1795536879524
   }
  ],
  "surv": [
