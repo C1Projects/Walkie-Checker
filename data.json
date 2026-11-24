@@ -222,9 +222,9 @@
   {
    "code": "CG001913",
    "name": "Cordell C",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793824601099,
+   "outT": 1795537113702,
    "inT": 1793824601099,
    "del": false,
    "delT": 1793824601099,
