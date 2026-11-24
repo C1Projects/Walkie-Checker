@@ -882,9 +882,9 @@
   {
    "code": "CG001087",
    "name": "Genesis Tibett",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793899707509,
+   "outT": 1795537229941,
    "inT": 1793899707509,
    "nameT": 1793899707509,
    "id": "id-CG001087",
