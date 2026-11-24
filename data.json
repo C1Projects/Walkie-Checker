@@ -680,9 +680,9 @@
   {
    "code": "CG02021",
    "name": "Luke Arnold",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793825409330,
+   "outT": 1795538008882,
    "inT": 1793825409330,
    "nameT": 1793825409330,
    "id": "id-CG02021"
