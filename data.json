@@ -1021,20 +1021,20 @@
   {
    "code": "CG001942",
    "name": "INTERN 1",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-CG001942",
-   "outT": 1794247245738,
+   "outT": 1795551749223,
    "inT": 1794247245738,
    "nameT": 1794247245738
   },
   {
    "code": "CG001895",
    "name": "INTERN 2",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-INTERN 2 CG001895",
-   "outT": 1794247252820,
+   "outT": 1795551749089,
    "inT": 1794247252820,
    "nameT": 1794247266419,
    "codeT": 1794247266419
