@@ -598,9 +598,9 @@
   {
    "code": "CG001944",
    "name": "Katherine E",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793824955695,
+   "outT": 1795535860677,
    "inT": 1793824955695,
    "nameT": 1793824955695,
    "id": "id-CG001944"
