@@ -931,10 +931,10 @@
   {
    "code": "CG001962",
    "name": "Centerria Wright",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-CG001962",
-   "outT": 1794243295837,
+   "outT": 1795538068517,
    "inT": 1794243295837,
    "nameT": 1794243295837
   },
