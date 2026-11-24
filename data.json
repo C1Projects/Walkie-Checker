@@ -720,9 +720,9 @@
   {
    "code": "CG000232",
    "name": "Corey L",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793826172019,
+   "outT": 1795535782534,
    "inT": 1793826172019,
    "nameT": 1793826172019,
    "id": "id-CG000232"
