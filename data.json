@@ -72,9 +72,9 @@
   {
    "code": "CG001946",
    "name": "Desseree Abanzukwe",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1794243385487,
+   "outT": 1795535145943,
    "inT": 1794243385487,
    "del": false,
    "delT": 1794243385487,
