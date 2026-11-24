@@ -862,9 +862,9 @@
   {
    "code": "CG000194",
    "name": "Jovanny Reyes",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793898748920,
+   "outT": 1795538751634,
    "inT": 1793898748920,
    "nameT": 1793898748920,
    "id": "id-CG000194"
