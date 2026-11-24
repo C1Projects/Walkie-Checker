@@ -750,9 +750,9 @@
   {
    "code": "CG000229",
    "name": "Kayla Ross",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793826546133,
+   "outT": 1795535428620,
    "inT": 1793826546133,
    "nameT": 1793826546133,
    "id": "id-CG000229"
