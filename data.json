@@ -60,9 +60,9 @@
   {
    "code": "CG001991",
    "name": "Tez Valenzula",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1794243717891,
+   "outT": 1795538168589,
    "inT": 1794243717891,
    "del": false,
    "delT": 1794243717891,
