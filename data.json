@@ -660,9 +660,9 @@
   {
    "code": "CG000210",
    "name": "Lauren S",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793825266943,
+   "outT": 1795535336906,
    "inT": 1793825266943,
    "nameT": 1793825266943,
    "id": "id-CG000210"
