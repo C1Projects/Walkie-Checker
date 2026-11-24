@@ -628,9 +628,9 @@
   {
    "code": "CG001980",
    "name": "Gerald J",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793825076819,
+   "outT": 1795535381031,
    "inT": 1793825076819,
    "nameT": 1793825076819,
    "id": "id-CG001980"
