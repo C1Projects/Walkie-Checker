@@ -210,9 +210,9 @@
   {
    "code": "CG000230",
    "name": "Tom Spencer",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793899813997,
+   "outT": 1795537831086,
    "inT": 1793899813997,
    "del": false,
    "delT": 1793899813997,
