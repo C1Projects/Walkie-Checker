@@ -670,9 +670,9 @@
   {
    "code": "CG000235",
    "name": "Bart Booth",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793825352092,
+   "outT": 1795537180117,
    "inT": 1793825352092,
    "nameT": 1793825352092,
    "id": "id-CG000235"
