@@ -234,9 +234,9 @@
   {
    "code": "CG001964",
    "name": "Renn Brown",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1794243677773,
+   "outT": 1795540078654,
    "inT": 1794243677773,
    "del": false,
    "delT": 1794243677773,
