@@ -991,10 +991,10 @@
   {
    "code": "CG001959",
    "name": "Nano Segler",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-CG001959",
-   "outT": 1794243455005,
+   "outT": 1795538325315,
    "inT": 1794243455005,
    "nameT": 1794243455005
   },
