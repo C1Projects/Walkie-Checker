@@ -408,12 +408,12 @@
   {
    "code": "CG001918",
    "name": "Kristen White",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793823921002,
+   "outT": 1795535301057,
    "inT": 1793823921002,
-   "del": true,
-   "delT": 1793823927335,
+   "del": false,
+   "delT": 1795535301057,
    "id": "id-CG001918"
   },
   {
