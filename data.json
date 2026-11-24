@@ -802,9 +802,9 @@
   {
    "code": "CG001953",
    "name": "Derek Gibbs",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1794339746121,
+   "outT": 1795537274858,
    "inT": 1793897471411,
    "nameT": 1793897471411,
    "id": "id-CG001953"
