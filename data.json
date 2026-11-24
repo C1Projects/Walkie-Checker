@@ -326,9 +326,9 @@
   {
    "code": "CG000201",
    "name": "Lanece W",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793825895518,
+   "outT": 1795535598779,
    "inT": 1793825895518,
    "del": false,
    "delT": 1793825895518,
