@@ -84,9 +84,9 @@
   {
    "code": "CG000198",
    "name": "Dontavious Seals",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793898969173,
+   "outT": 1795535091470,
    "inT": 1793898969173,
    "del": false,
    "delT": 1793898969173,
