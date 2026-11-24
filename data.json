@@ -700,9 +700,9 @@
   {
    "code": "CG02001",
    "name": "Keonnie L",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793825818244,
+   "outT": 1795535983707,
    "inT": 1793825818244,
    "nameT": 1793825818244,
    "id": "id-CG02001"
