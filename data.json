@@ -396,9 +396,9 @@
   {
    "code": "CG02036",
    "name": "Terrence Davis",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793899477414,
+   "outT": 1795535948922,
    "inT": 1793899477414,
    "del": false,
    "delT": 1793899477414,
