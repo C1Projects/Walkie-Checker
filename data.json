@@ -153,9 +153,9 @@
   {
    "code": "CG001979",
    "name": "Gregg Thompson",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1794243591641,
+   "outT": 1795538271329,
    "inT": 1794243591641,
    "del": false,
    "delT": 1794243591641,
