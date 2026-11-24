@@ -941,10 +941,10 @@
   {
    "code": "CG001948",
    "name": "Kelin Perry",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-CG001948",
-   "outT": 1794243311588,
+   "outT": 1795535739649,
    "inT": 1794243311588,
    "nameT": 1794340535708
   },
