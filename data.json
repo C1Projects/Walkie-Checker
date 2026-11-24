@@ -497,9 +497,9 @@
   {
    "code": "CG001159",
    "name": "Kimberly Stokes",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793897150448,
+   "outT": 1795535126460,
    "inT": 1793897150448,
    "del": false,
    "delT": 1793897150448,
