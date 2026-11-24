@@ -822,9 +822,9 @@
   {
    "code": "CG001081",
    "name": "Cecily Allen",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1795362881819,
+   "outT": 1795535660171,
    "inT": 1793897881831,
    "nameT": 1793897881831,
    "id": "id-CG001081"
