@@ -176,9 +176,9 @@
   {
    "code": "CG001092",
    "name": "Clay Hodges",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793899201081,
+   "outT": 1795535361680,
    "inT": 1793899201081,
    "del": false,
    "delT": 1793899201081,
