@@ -608,9 +608,9 @@
   {
    "code": "CG001706",
    "name": "Chaz B",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793824994154,
+   "outT": 1795551740109,
    "inT": 1793824994154,
    "nameT": 1793824994154,
    "id": "id-CG001706"
