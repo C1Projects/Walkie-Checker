@@ -588,9 +588,9 @@
   {
    "code": "CG1918",
    "name": "Robin O",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793824459164,
+   "outT": 1795538910056,
    "inT": 1793824459164,
    "nameT": 1793824459164,
    "id": "id-CG1918"
