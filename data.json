@@ -971,10 +971,10 @@
   {
    "code": "CG001893",
    "name": "Francine Simmons",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-CG001893",
-   "outT": 1795362878609,
+   "outT": 1795535496327,
    "inT": 1794243404189,
    "nameT": 1794243404189
   },
