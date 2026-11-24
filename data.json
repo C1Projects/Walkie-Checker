@@ -292,9 +292,9 @@
   {
    "code": "CG02028",
    "name": "Janine Carthone",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1794243225886,
+   "outT": 1795538129741,
    "inT": 1794243225886,
    "del": false,
    "delT": 1794243225886,
