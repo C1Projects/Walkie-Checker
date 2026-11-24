@@ -730,9 +730,9 @@
   {
    "code": "CG001920",
    "name": "Tristen C",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793826310269,
+   "outT": 1795535057287,
    "inT": 1793826310269,
    "nameT": 1793826310269,
    "id": "id-CG001920"
