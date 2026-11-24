@@ -280,9 +280,9 @@
   {
    "code": "CG000214",
    "name": "Christian Burnette",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793823938304,
+   "outT": 1795551741356,
    "inT": 1793823938304,
    "nameT": 1793823938304,
    "del": false,
