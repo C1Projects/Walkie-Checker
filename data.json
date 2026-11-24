@@ -48,9 +48,9 @@
   {
    "code": "CG000218",
    "name": "Brandon C",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793826597861,
+   "outT": 1795535248260,
    "inT": 1793826597861,
    "del": false,
    "delT": 1793826597861,
