@@ -1011,10 +1011,10 @@
   {
    "code": "CG002000",
    "name": "Markel Dantzler",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-CG002000",
-   "outT": 1794243632907,
+   "outT": 1795537948659,
    "inT": 1794243632907,
    "nameT": 1794243632907
   },
