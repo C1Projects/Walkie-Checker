@@ -1071,6 +1071,17 @@
    "inT": 1795538639188,
    "unlisted": true,
    "unlistedT": 1795538639188
+  },
+  {
+   "id": "id-CG001985",
+   "code": "CG001985",
+   "name": "NOT ON LIST",
+   "out": true,
+   "in": false,
+   "outT": 1795540026348,
+   "inT": 1795540026348,
+   "unlisted": true,
+   "unlistedT": 1795540026348
   }
  ],
  "surv": [
