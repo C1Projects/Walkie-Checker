@@ -246,9 +246,9 @@
   {
    "code": "CG001084",
    "name": "Bradley J",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1793826363797,
+   "outT": 1795539954222,
    "inT": 1793826363797,
    "del": false,
    "delT": 1793826363797,
