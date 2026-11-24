@@ -961,10 +961,10 @@
   {
    "code": "CG001098",
    "name": "Sarah \"Kat\" Mayer",
-   "out": false,
+   "out": true,
    "in": false,
    "id": "id-CG001098",
-   "outT": 1794243359555,
+   "outT": 1795537867262,
    "inT": 1794243359555,
    "nameT": 1794243359555
   },
