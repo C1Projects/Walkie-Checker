@@ -452,9 +452,9 @@
   {
    "code": "CG02012",
    "name": "Glenn Taylor",
-   "out": false,
+   "out": true,
    "in": false,
-   "outT": 1794243418922,
+   "outT": 1795537066651,
    "inT": 1794243418922,
    "del": false,
    "delT": 1794243418922,
